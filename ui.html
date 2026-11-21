@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HatCryptoBot</title>
+<style>
+:root{
+  --bg:#0b0e1a; --panel:#131830; --sunk:#0f1327; --line:#232a4a; --fg:#e8ebf8; --muted:#8e96bd;
+  --accent:#7c6cff; --accent2:#22c3d6; --up:#35d39a; --down:#ff6b7a; --warn:#f2b04a;
+  --font:"Segoe UI",system-ui,-apple-system,sans-serif; --mono:Consolas,"Cascadia Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box} html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--font);display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+nav{background:linear-gradient(180deg,#151a38,#0f1329);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
+.brand b{font-size:20px;letter-spacing:-.02em}
+.mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center}
+nav button{all:unset;cursor:pointer;padding:9px 12px;border-radius:9px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:10px}
+nav button:hover{background:#1b2146;color:var(--fg)}
+nav button[aria-current="page"]{background:#232a5c;color:var(--fg)}
+nav .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+nav .grow{flex:1}
+.runstate{padding:10px 12px;border-radius:10px;background:var(--sunk);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+main{padding:22px 26px;overflow:auto}
+h1{font-size:22px;margin:0 0 4px} h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 10px}
+.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;gap:14px}
+.cards{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.v{font:600 24px var(--mono);margin-top:4px}
+.s{font-size:12px;color:var(--muted)}
+.up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line);font-family:var(--mono)}
+td.why{font-family:var(--font);color:var(--muted);white-space:normal}
+.tag{font:600 11px var(--mono);padding:2px 7px;border-radius:5px;background:#232a5c;color:#b9b2ff}
+.pill{font:700 11px var(--mono);padding:3px 9px;border-radius:99px}
+.p-trade{background:#123b2c;color:var(--up)} .p-prob{background:#3a2c10;color:var(--warn)} .p-shadow{background:#2a2f4d;color:var(--muted)}
+.btn{font:600 14px var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:10px;padding:10px 16px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.go{background:#1f8f63;border-color:#1f8f63;color:#fff}
+.btn.danger{background:#7a2433;border-color:#a8344a;color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label{display:grid;gap:5px;font-size:12px;color:var(--muted)}
+input,select,textarea{font:14px var(--mono);background:var(--sunk);border:1px solid var(--line);color:var(--fg);border-radius:9px;padding:9px 11px;width:100%}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.help{font-size:12px;color:var(--muted)}
+.log{background:#070914;border:1px solid var(--line);border-radius:12px;padding:12px;font:12px/1.5 var(--mono);height:62vh;overflow:auto;white-space:pre-wrap}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:420px;box-shadow:0 10px 30px #0008}
+canvas{width:100%;height:220px;display:block}
+.notice{background:#2a1f10;border:1px solid #5a4012;border-radius:12px;padding:12px 14px;color:#f6d9a6}
+section[hidden]{display:none}
+@media (max-width:760px){
+  body{grid-template-columns:1fr;font-size:15px}
+  nav{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;padding:8px;gap:2px;align-items:center;position:sticky;top:0;z-index:5;border-right:0;border-bottom:1px solid var(--line)}
+  .brand,nav .grow{display:none}
+  nav button{padding:8px 10px;white-space:nowrap;font-size:13px}
+  nav .dot{display:none}
+  .runstate{display:none}
+  main{padding:14px 16px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .v{font-size:20px}
+  table{display:block;overflow-x:auto}
+  .toast{left:16px;right:16px;max-width:none}
+}
+a{color:var(--accent2)}
+</style>
+</head>
+<body>
+<nav aria-label="Menu">
+  <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 20 20"><path d="M2 15 L7 9 L11 12 L18 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>HatCryptoBot</b></div>
+  <button data-page="dash" aria-current="page"><span class="dot"></span>Dashboard</button>
+  <button data-page="control"><span class="dot"></span>Start / Stop</button>
+  <button data-page="strats"><span class="dot"></span>Strategies</button>
+  <button data-page="trades"><span class="dot"></span>Trades</button>
+  <button data-page="settings"><span class="dot"></span>Settings</button>
+  <button data-page="keys"><span class="dot"></span>Wallet &amp; keys</button>
+  <button data-page="copy"><span class="dot"></span>Copy-trading</button>
+  <button data-page="events"><span class="dot"></span>Events</button>
+  <button data-page="log"><span class="dot"></span>Log</button>
+  <button data-page="help"><span class="dot"></span>Help</button>
+  <span class="grow"></span>
+  <div class="runstate" id="runstate">checking…</div>
+  <button id="quitBtn" style="margin-top:8px;justify-content:center;border:1px solid var(--line)">Quit HatCryptoBot</button>
+</nav>
+<main>
+  <!-- DASHBOARD -->
+  <section id="dash">
+    <h1>Dashboard</h1><p class="sub" id="modeLine">—</p>
+    <div class="grid cards">
+      <div class="card"><div class="k">Balance</div><div class="v" id="bal">—</div><div class="s" id="balSol">—</div></div>
+      <div class="card"><div class="k">Profit / loss</div><div class="v" id="pnl">—</div><div class="s" id="pnlPct">—</div></div>
+      <div class="card"><div class="k">Win rate</div><div class="v" id="win">—</div><div class="s" id="winS">—</div></div>
+      <div class="card"><div class="k">Open coins</div><div class="v" id="open">0</div><div class="s" id="cash">—</div></div>
+    </div>
+    <div class="card" style="margin-top:14px"><h2>Balance over time</h2><canvas id="chart"></canvas></div>
+    <div class="card" style="margin-top:14px"><h2>Regular coins — OKX demo account</h2>
+      <div class="grid cards"><div><div class="k">OKX demo balance</div><div class="v" id="okxBal">—</div><div class="s" id="okxPnl">start it in Start / Stop</div></div>
+        <div><div class="k">Open</div><div class="v" id="okxOpen">0</div><div class="s" id="okxWin">—</div></div></div>
+      <p class="s" style="margin:10px 0 0">Watch these trades live in the OKX app: switch it to <b>Demo Trading</b>.</p>
+      <div class="row" style="margin-top:10px"><button class="btn" id="testOrder">Test order (buy ~$5 BTC, sell it back)</button></div>
+      <pre class="s" id="testOut" style="white-space:pre-wrap;margin:8px 0 0" hidden></pre></div>
+    <div class="card" style="margin-top:14px"><h2>Open positions</h2>
+      <table><thead><tr><th>Coin</th><th>Strategy</th><th>In (SOL)</th><th>Now (SOL)</th><th>P&amp;L</th></tr></thead><tbody id="posT"></tbody></table></div>
+  </section>
+
+  <!-- CONTROL -->
+  <section id="control" hidden>
+    <h1>Start / Stop</h1><p class="sub">Demo = real market, fake money. Live = your real wallet.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      <div class="card"><h2>Trading bot (meme + regular coins)</h2>
+        <p class="s" id="botState">—</p>
+        <div class="row"><button class="btn go" data-start="bot">Start demo</button><button class="btn danger" data-livestart="bot">Start LIVE</button><button class="btn" data-stop="bot">Stop</button></div></div>
+      <div class="card"><h2>Launch sniper</h2><p class="s" id="sniperState">—</p>
+        <div class="row"><button class="btn go" data-start="sniper">Start demo</button><button class="btn danger" data-livestart="sniper">Start LIVE</button><button class="btn" data-stop="sniper">Stop</button></div></div>
+      <div class="card"><h2>Copy-trader</h2><p class="s" id="copyState">—</p>
+        <div class="row"><button class="btn go" data-start="copy">Start demo</button><button class="btn danger" data-livestart="copy">Start LIVE</button><button class="btn" data-stop="copy">Stop</button></div></div>
+      <div class="card"><h2>Regular coins — OKX demo</h2><p class="s" id="okxState">—</p>
+        <div class="row"><button class="btn go" data-start="okx">Start on OKX demo</button><button class="btn" data-stop="okx">Stop</button></div>
+        <p class="help">Trades BTC, ETH and the top 50 coins on your OKX Demo Trading account. You see every trade in the OKX app.</p></div>
+      <div class="card"><h2>Fresh demo</h2><p class="s">Stops the bot and restarts the demo with a new balance.</p>
+        <div class="row"><input id="resetUsd" type="number" value="1000" min="10" style="max-width:140px"><button class="btn primary" id="resetBtn">Restart demo</button></div></div>
+    </div>
+    <div class="card notice" style="margin-top:14px" id="liveBox" hidden>
+      <b>Start with REAL money?</b><p>The bot will trade from the wallet in <i>Wallet &amp; keys</i>, never using more than the live budget in Settings. Losses are real. Type <b>YES</b> to confirm.</p>
+      <div class="row"><input id="liveYes" placeholder="type YES" style="max-width:160px"><button class="btn danger" id="liveGo">Start live</button><button class="btn" id="liveCancel">Cancel</button></div>
+    </div>
+  </section>
+
+  <!-- STRATEGIES -->
+  <section id="strats" hidden>
+    <h1>Strategies</h1><p class="sub">A strategy only trades when the recorded market proves it makes money after fees. Checked every 30 minutes.</p>
+    <div class="card"><table><thead><tr><th>Strategy</th><th>Status</th><th>Trades</th><th>Win</th><th>P&amp;L (SOL)</th><th>Why</th></tr></thead><tbody id="stratT"></tbody></table></div>
+    <div class="card" style="margin-top:14px"><h2>Prediction model</h2><p id="modelS" class="s">—</p></div>
+    <div class="card" style="margin-top:14px"><h2>AI &amp; safety — last 24 hours</h2>
+      <div class="grid cards" id="brainCards"></div>
+      <p class="s" id="brainSmart" style="margin:10px 0 0">—</p></div>
+    <div class="card" style="margin-top:14px"><h2>AI brain — latest ratings</h2><p class="s" id="brainNote">—</p>
+      <table><thead><tr><th>Coin</th><th>Hype</th><th>Danger</th><th>Why</th></tr></thead><tbody id="brainT"></tbody></table></div>
+    <div class="card" style="margin-top:14px"><h2>Recently blocked</h2><pre class="s" id="brainEx" style="white-space:pre-wrap;margin:0">—</pre></div>
+  </section>
+
+  <!-- TRADES -->
+  <section id="trades" hidden>
+    <h1>Trades</h1><p class="sub">Newest first.</p>
+    <div class="card"><table><thead><tr><th>Time</th><th>Side</th><th>Coin</th><th>Strategy</th><th>SOL</th><th>P&amp;L</th><th>Why</th></tr></thead><tbody id="tradeT"></tbody></table></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings" hidden>
+    <h1>Settings</h1><p class="sub">Saved on this PC. Restart the bot to apply.</p>
+    <div class="card"><div class="form" id="setForm"></div><div class="row" style="margin-top:14px"><button class="btn primary" id="saveSet">Save settings</button></div></div>
+  </section>
+
+  <!-- KEYS -->
+  <section id="keys" hidden>
+    <h1>Wallet &amp; keys</h1><p class="sub">Only needed for LIVE trading. Stored only in a file on this PC — never sent anywhere else.</p>
+    <div class="card notice">Use a <b>separate wallet</b> holding only what the bot may trade (e.g. a new Phantom wallet funded from Fomo). Anyone with the private key controls that wallet.</div>
+    <div class="card" style="margin-top:14px"><h2>Bot wallet</h2>
+      <p class="s" id="walAddrBox">No bot wallet yet.</p>
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="newWal">Create bot wallet</button>
+        <button class="btn" id="copyAddr">Copy address</button><button class="btn" id="showKey">Show private key (backup)</button></div>
+      <p class="s" style="margin:10px 0 0">Creates a fresh Solana wallet just for the bot. Send your budget to its address from Fomo (Send → SOL → paste address).
+        A backup file is saved in the bot folder; you can also import the key into Phantom (Add account → Import Private Key) to see it there or move money out.</p>
+      <pre class="s" id="keyOut" hidden style="white-space:pre-wrap;word-break:break-all;margin:8px 0 0"></pre></div>
+    <div class="card" style="margin-top:14px"><div class="form">
+      <label>Wallet private key <span id="kWallet" class="help"></span><input id="wallet" type="password" placeholder="paste to set / replace"></label>
+      <label>Jupiter API key (free, portal.jup.ag) <span id="kJup" class="help"></span><input id="jupiter" type="password" placeholder="paste to set / replace"></label>
+      <label>RPC URL (free, helius.dev) <span id="kRpc" class="help"></span><input id="rpc" type="password" placeholder="paste to set / replace"></label>
+      <label>OKX demo API key <span id="kOkx" class="help"></span><input id="okx_key" type="password" placeholder="from OKX Demo Trading → API"></label>
+      <label>OKX demo API secret<input id="okx_secret" type="password"></label>
+      <label>OKX demo API passphrase<input id="okx_pass" type="password" placeholder="the passphrase you chose"></label>
+      <label>Anthropic API key — turns on the AI brain (console.anthropic.com) <span id="kAi" class="help"></span><input id="anthropic" type="password" placeholder="sk-ant-…"></label>
+      <label>Reddit app id (optional)<input id="reddit_id" type="password"></label>
+      <label>Reddit app secret (optional)<input id="reddit_secret" type="password"></label>
+      <label>X / Twitter bearer token (optional)<input id="x_token" type="password"></label>
+      <label>CryptoPanic key (optional)<input id="cryptopanic" type="password"></label>
+    </div><div class="row" style="margin-top:14px"><button class="btn primary" id="saveKeys">Save keys</button></div></div>
+  </section>
+
+  <!-- COPY -->
+  <section id="copy" hidden>
+    <h1>Copy-trading</h1><p class="sub">Wallets to copy (e.g. top Fomo traders' real wallets). The bot copies their buys and sells with its safety checks in front.</p>
+    <div class="card"><table><thead><tr><th>Wallet address</th><th>Name</th><th>On</th><th></th></tr></thead><tbody id="walT"></tbody></table>
+      <div class="row" style="margin-top:12px"><input id="newWal" placeholder="Solana wallet address" style="flex:2"><input id="newName" placeholder="name, e.g. fomo: alice" style="flex:1"><button class="btn" id="addWal">Add</button><button class="btn primary" id="saveWal">Save</button></div></div>
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events" hidden>
+    <h1>Events</h1><p class="sub">Hyped things to watch (a game launch, a holiday…). Coins named after them get extra attention before the date.</p>
+    <div class="card"><table><thead><tr><th>Name</th><th>Date</th><th>Keywords</th><th>On</th><th></th></tr></thead><tbody id="evT"></tbody></table>
+      <div class="row" style="margin-top:12px"><input id="evName" placeholder="name" style="flex:1"><input id="evDate" type="date" style="flex:1"><input id="evKw" placeholder="KEYWORDS, comma separated" style="flex:2"><button class="btn" id="addEv">Add</button><button class="btn primary" id="saveEv">Save</button></div></div>
+  </section>
+
+  <!-- LOG -->
+  <section id="log" hidden>
+    <h1>Log</h1><div class="row" style="margin-bottom:10px"><select id="logWhich" style="max-width:220px"><option value="bot">Trading bot</option><option value="sniper">Sniper</option><option value="copy">Copy-trader</option><option value="okx">OKX demo</option></select></div>
+    <div class="log" id="logBox">—</div>
+  </section>
+
+  <!-- HELP -->
+  <section id="help" hidden>
+    <h1>Help</h1>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div class="card"><h2>Quick start</h2><ol class="s"><li>Start / Stop → <b>Start demo</b>.</li><li>Watch the Dashboard. Trades also go to your phone (below).</li><li>Change risk in Settings.</li><li>Real money only after demo looks good: add keys, set a live budget, then Start LIVE.</li></ol></div>
+      <div class="card"><h2>Phone app</h2><p class="s">Use the dashboard on your phone while the PC runs the bot.
+        Phone and PC must be on the <b>same Wi-Fi</b>. If Windows asks about network access, allow <b>Private networks</b>.</p>
+        <div class="row" style="margin:10px 0"><button class="btn primary" id="phoneOn">Turn on phone access</button><button class="btn" id="phoneOff">Turn off</button></div>
+        <p class="s" id="phoneMsg">Off.</p><p style="word-break:break-all;margin:6px 0 0"><b id="phoneUrl"></b></p>
+        <p class="s" style="margin:6px 0 0">Open that link on the phone (type it in Chrome/Safari), then <b>Add to Home Screen</b>. The link contains a PIN — don't share it.</p></div>
+      <div class="card"><h2>Updates</h2><p class="s" id="verS">—</p>
+        <div class="row" style="margin-top:10px"><button class="btn" id="updBtn">Check for updates</button></div>
+        <p class="s" style="margin:8px 0 0">Updates install by themselves every hour. Your settings, keys, wallet, history and what the bot learned are kept.</p></div>
+      <div class="card"><h2>Phone alerts</h2><p class="s">Install <b>ntfy</b> (App Store / Google Play), tap +, subscribe to:</p><p class="v" style="font-size:16px" id="ntfyTopic">—</p></div>
+      <div class="card"><h2>Where your files are</h2><p class="s" id="homeDir">—</p><button class="btn" id="openFolder">Open folder</button></div>
+      <div class="card"><h2>Safety</h2><p class="s">Stop-loss on every trade, daily loss limit, kill switch, and only proven strategies trade. Still: meme coins are high risk — only trade money you can afford to lose.</p></div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=id=>document.getElementById(id);
+let S=null, pending=null;
+const fmt$=n=>(n<0?"-":"")+"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const sgn=(n,d=2)=>(n>=0?"+":"")+n.toFixed(d);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,4500)}
+async function api(path,body){const r=await fetch(path,body?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}:{});return r.json()}
+
+// menu
+document.querySelectorAll("nav button[data-page]").forEach(b=>b.onclick=()=>show(b.dataset.page));
+function show(p){document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==p);
+  document.querySelectorAll("nav button[data-page]").forEach(b=>b.setAttribute("aria-current",b.dataset.page===p?"page":"false"));
+  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
+
+const LABELS={scalp:"Scalp (quick +6%)",momentum:"Momentum",dip:"Dip buy",breakout:"Breakout",rocket:"Rocket",
+  maj_momentum:"Regular: momentum",maj_dip:"Regular: dip",maj_breakout:"Regular: breakout",hype:"VIP post (Elon/Trump)",predict:"Prediction model"};
+async function refresh(){
+  try{S=await api("/api/state")}catch(e){$("runstate").textContent="app not responding — close this window and open HatCryptoBot again";return}
+  if(S&&S.error){$("runstate").textContent="error: "+S.error+" (send Lunyx a screenshot)";return}
+  const usd=S.sol_usd||0, eq=S.equity_sol, st=S.start_sol, pnl=eq-st;
+  $("bal").textContent=usd?fmt$(eq*usd):eq.toFixed(4)+" SOL"; $("balSol").textContent=eq.toFixed(4)+" SOL";
+  $("pnl").textContent=usd?fmt$(pnl*usd):sgn(pnl,4)+" SOL"; $("pnl").className="v "+(pnl>0?"up":pnl<0?"down":"");
+  $("pnlPct").textContent=sgn(pnl/st*100,2)+"% since start";
+  $("win").textContent=S.closed?Math.round(S.wins/S.closed*100)+"%":"–"; $("winS").textContent=`${S.wins} won of ${S.closed} closed`;
+  $("open").textContent=S.positions.length; $("cash").textContent=`cash ${S.cash_sol.toFixed(3)} SOL`;
+  const r=S.running, live=S.mode==="live";
+  $("modeLine").innerHTML=(r.bot?`<span class="up">● running</span>`:`<span class="down">● stopped</span>`)+` · ${live?'<b class="down">LIVE — real money</b>':'demo (fake money)'}`+(S.killed?' · <b class="down">kill switch hit</b>':'')+(S.halted?' · daily loss limit reached':'');
+  $("runstate").innerHTML=`Bot: ${r.bot?'<span class="up">running</span>':'stopped'}<br>Sniper: ${r.sniper?'<span class="up">running</span>':'stopped'}<br>Copy: ${r.copy?'<span class="up">running</span>':'stopped'}<br>OKX demo: ${r.okx?'<span class="up">running</span>':'stopped'}<br>Mode: ${live?'<b class="down">LIVE</b>':'demo'}`;
+  const o=S.okx||{};$("okxBal").textContent=o.equity!=null?o.equity.toFixed(2)+" "+(o.quote||"USDT"):"—";
+  $("okxPnl").textContent=o.equity!=null&&o.start?sgn(o.equity-o.start,2)+" "+(o.quote||"USDT")+" since start":(r.okx?"connecting…":"start it in Start / Stop");
+  $("okxOpen").textContent=o.open||0;$("okxWin").textContent=o.closed?`${o.wins} won of ${o.closed} closed`:"no closed trades yet";
+  $("okxState").textContent=r.okx?"Running on your OKX demo account":(S.okx_error?"⚠ "+S.okx_error:(S.okx_keys?"Stopped":"Add your OKX demo keys in Wallet & keys first"));
+  $("kOkx").textContent=S.okx_keys?"(set)":"(not set)";
+  $("kAi").textContent=S.ai_key?"(set)":"(not set)";
+  $("botState").textContent=r.bot?"Running":"Stopped"; $("sniperState").textContent=r.sniper?"Running":"Stopped"; $("copyState").textContent=r.copy?"Running":"Stopped";
+  $("posT").innerHTML=S.positions.length?S.positions.map(p=>{const ch=(p.value/p.cost-1)*100;return `<tr><td>${esc(p.sym)}</td><td><span class="tag">${esc(p.strategy)}</span></td><td>${p.cost.toFixed(4)}</td><td>${p.value.toFixed(4)}</td><td class="${ch>=0?"up":"down"}">${sgn(ch,1)}%</td></tr>`}).join(""):`<tr><td colspan="5" class="why">No coins held right now.</td></tr>`;
+  $("tradeT").innerHTML=S.trades.length?S.trades.map(t=>`<tr><td>${esc((t.time||"").slice(11,19))}</td><td class="${t.side==="buy"?"up":"down"}">${t.side.toUpperCase()}</td><td>${esc(t.symbol)}</td><td><span class="tag">${esc(t.strategy||"")}</span></td><td>${(t.sol||0).toFixed(4)}</td><td class="${(t.pnl_sol||0)>=0?"up":"down"}">${t.pnl_sol!=null?sgn(t.pnl_sol,4):""}</td><td class="why">${esc(t.reason||"")}</td></tr>`).join(""):`<tr><td colspan="7" class="why">No trades yet.</td></tr>`;
+  const names=new Set([...Object.keys(S.edge.verdict||{}),...Object.keys(S.by_strategy||{})]);
+  $("stratT").innerHTML=[...names].map(n=>{const v=(S.edge.verdict||{})[n]||"—",b=S.by_strategy[n]||{n:0,w:0,pnl:0};
+    const cls=v==="trade"?"p-trade":v==="probation"?"p-prob":"p-shadow",lab=v==="trade"?"TRADING":v==="probation"?"HALF SIZE":v==="shadow"?"BLOCKED":"—";
+    return `<tr><td>${esc(LABELS[n]||n)}</td><td><span class="pill ${cls}">${lab}</span></td><td>${b.n}</td><td>${b.n?Math.round(b.w/b.n*100)+"%":"–"}</td><td class="${b.pnl>=0?"up":"down"}">${b.n?sgn(b.pnl,4):""}</td><td class="why">${esc((S.edge.why||{})[n]||"")}</td></tr>`}).join("");
+  $("modelS").textContent=S.model.active?"ON — it proved an edge on tradeable coins.":"OFF — "+(S.model.why||"learning");
+  $("kWallet").textContent=S.keys.wallet?"(set)":"(not set)";
+  $("walAddrBox").innerHTML=S.wallet_address?`Address: <b style="word-break:break-all">${esc(S.wallet_address)}</b>`:"No bot wallet yet."; $("kJup").textContent=S.keys.jupiter?"(set)":"(not set)"; $("kRpc").textContent=S.keys.rpc?"(set)":"(not set)";
+  $("ntfyTopic").textContent=S.ntfy||"—"; $("homeDir").textContent=S.home;
+  drawChart();
+}
+function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
+  const h=(S.equity_history||[]).map(p=>p[1]);x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
+  if(h.length<2){x.fillText("The chart fills in as the bot runs.",10,r.height/2);return}
+  let lo=Math.min(...h,S.start_sol),hi=Math.max(...h,S.start_sol);const pad=(hi-lo)*.1||.01;lo-=pad;hi+=pad;
+  const X=i=>8+(r.width-60)*i/(h.length-1),Y=v=>8+(r.height-16)*(1-(v-lo)/(hi-lo));
+  x.strokeStyle="#232a4a";x.setLineDash([4,4]);x.beginPath();x.moveTo(8,Y(S.start_sol));x.lineTo(r.width-52,Y(S.start_sol));x.stroke();x.setLineDash([]);
+  const col=h[h.length-1]>=S.start_sol?"#35d39a":"#ff6b7a";x.strokeStyle=col;x.lineWidth=2;x.beginPath();h.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
+  x.fillText(hi.toFixed(3),r.width-48,14);x.fillText(lo.toFixed(3),r.width-48,r.height-4)}
+
+// control
+document.querySelectorAll("[data-start]").forEach(b=>b.onclick=async()=>{const r=await api("/api/start",{name:b.dataset.start,live:false});toast(r.msg);refresh()});
+document.querySelectorAll("[data-stop]").forEach(b=>b.onclick=async()=>{const r=await api("/api/stop",{name:b.dataset.stop});toast(r.msg);refresh()});
+document.querySelectorAll("[data-livestart]").forEach(b=>b.onclick=()=>{pending=b.dataset.livestart;$("liveBox").hidden=false;$("liveYes").value="";$("liveYes").focus()});
+$("liveCancel").onclick=()=>{$("liveBox").hidden=true;pending=null};
+$("liveGo").onclick=async()=>{const r=await api("/api/start",{name:pending,live:true,confirm:$("liveYes").value.trim()});toast(r.msg);if(r.ok)$("liveBox").hidden=true;refresh()};
+$("testOrder").onclick=async()=>{const b=$("testOrder"),o=$("testOut");b.disabled=true;o.hidden=false;o.textContent="sending test order to OKX demo… (about 10 seconds)";
+  try{const r=await api("/api/test_order",{});o.textContent=(r.lines||[r.msg]).join("\n")}catch(e){o.textContent="test order failed: "+e}b.disabled=false};
+async function loadBrain(){let B;try{B=await api("/api/brain")}catch(e){return}
+  const L={holder:["Holder / dev blocks","coins skipped for who owns them"],rug:["Rug checks","mint, freeze, LP or RugCheck danger"],
+    ai_veto:["AI vetoes","Claude rated danger 7+"],model_veto:["Model vetoes","bottom 40% by the learning model"],
+    ai_exit:["AI exits","sold early, story died"],smart_buy:["Smart-money buys","2+ smart wallets bought"]};
+  $("brainCards").innerHTML=Object.keys(L).map(k=>`<div><div class="k">${L[k][0]}</div><div class="v">${B.counts[k]||0}</div><div class="s">${L[k][1]}</div></div>`).join("");
+  $("brainSmart").textContent=`Smart money: following ${B.smart_wallets} wallets (early on 2+ winners), learned from ${B.winners_studied} winners. Smart trades: ${B.smart_trades}, ${B.smart_wins} won.`;
+  $("brainNote").textContent=!B.ai_key?"Add an Anthropic API key in Wallet & keys to turn the AI brain on.":(B.ai_time?"Updated "+new Date(B.ai_time*1000).toLocaleTimeString()+(B.ai_note?" — "+B.ai_note:""):"Waiting for the first rating (every 10 min while the bot runs).");
+  $("brainT").innerHTML=(B.ai_coins||[]).map(c=>`<tr><td>${esc(c.sym||"?")}${c.sell_now?" (sell)":""}</td><td>${c.hype}</td><td>${c.danger}</td><td>${esc(c.reason||"")}</td></tr>`).join("")||"<tr><td colspan=4>no ratings yet</td></tr>";
+  const ex=[].concat(...["holder","rug","ai_veto","model_veto","ai_exit"].map(k=>B.examples[k]||[]));$("brainEx").textContent=ex.sort().reverse().slice(0,12).join("\n")||"nothing blocked yet"}
+$("newWal").onclick=async()=>{let b={};if(S.wallet_address&&!S.wallet_address.startsWith("invalid")){const c=prompt("A bot wallet already exists. Move its money out first. Type REPLACE to create a new one:");if(c!=="REPLACE")return;b.confirm="REPLACE"}
+  const r=await api("/api/new_wallet",b);toast(r.ok?"Bot wallet created — send SOL to its address":r.msg);refresh()};
+$("copyAddr").onclick=async()=>{if(!S.wallet_address||S.wallet_address.startsWith("invalid"))return toast("create the bot wallet first");try{await navigator.clipboard.writeText(S.wallet_address);toast("address copied")}catch(e){toast(S.wallet_address)}};
+$("showKey").onclick=async()=>{if(prompt("Anyone with this key controls the bot wallet. Type SHOW to display it:")!=="SHOW")return;
+  const r=await api("/api/show_wallet_key",{confirm:"SHOW"});const o=$("keyOut");o.hidden=false;o.textContent=r.key||r.msg};
+async function loadPhone(){try{const r=await api("/api/phone");$("phoneUrl").textContent=r.url||"";$("phoneMsg").textContent=r.enabled?(r.running?"On — open this on your phone:":"On, but the phone port could not open — restart the app"):"Off."}catch(e){}}
+async function loadVer(){try{const r=await api("/api/version");$("verS").textContent=`Version ${r.bot} — ${r.msg}`}catch(e){}}
+$("updBtn").onclick=async()=>{const r=await api("/api/update",{});toast(r.msg);setTimeout(loadVer,8000)};
+$("phoneOn").onclick=async()=>{const r=await api("/api/phone",{enabled:true,keep_pin:true});toast(r.msg);loadPhone()};
+$("phoneOff").onclick=async()=>{const r=await api("/api/phone",{enabled:false});toast(r.msg);loadPhone()};
+$("resetBtn").onclick=async()=>{const r=await api("/api/reset_demo",{usd:+$("resetUsd").value||1000});toast(r.ok?"Demo restarted":r.msg);refresh()};
+
+// settings
+const SETL={paper_start_sol:["Demo start balance (SOL)","Set automatically by 'Restart demo'"],live_budget_sol:["Live budget (SOL)","The most real SOL the bot may ever use"],
+  risk_per_trade_pct:["Risk per trade (%)","What one trade loses if its stop-loss hits"],max_positions:["Max coins at once",""],max_position_pct:["Max in one coin (%)",""],
+  max_position_sol:["Max per trade (SOL)",""],max_daily_loss_sol:["Daily loss limit (SOL)","No new buys for the rest of the day after this"],
+  max_drawdown_pct:["Kill switch (%)","Sell everything and stop after this drop from the peak"],ntfy_topic:["Phone alerts topic (ntfy)",""],edge_gate:["Only trade proven strategies","true / false"]};
+function fillSettings(){if(!S)return;$("setForm").innerHTML=Object.entries(SETL).map(([k,[l,h]])=>`<label>${l}<input id="set_${k}" value="${esc(S.settings[k]??"")}"><span class="help">${h}</span></label>`).join("")}
+$("saveSet").onclick=async()=>{const b={};Object.keys(SETL).forEach(k=>b[k]=$("set_"+k).value);const r=await api("/api/settings",b);toast(r.msg)};
+
+// keys
+$("saveKeys").onclick=async()=>{const b={};["wallet","jupiter","rpc","okx_key","okx_secret","okx_pass","reddit_id","reddit_secret","x_token","cryptopanic","anthropic"].forEach(k=>{b[k]=$(k).value.trim();$(k).value=""});const r=await api("/api/keys",b);toast(r.msg);refresh()};
+
+// copy wallets
+let W=[];async function loadWallets(){W=(await api("/api/wallets")).wallets||[];W=W.filter(w=>!String(w.address).startsWith("PASTE"));drawW()}
+function drawW(){$("walT").innerHTML=W.length?W.map((w,i)=>`<tr><td>${esc(w.address)}</td><td>${esc(w.name||"")}</td><td><input type="checkbox" data-wi="${i}" ${w.enabled!==false?"checked":""} style="width:auto"></td><td><button class="btn" data-wd="${i}">Remove</button></td></tr>`).join(""):`<tr><td colspan="4" class="why">No wallets yet. Add a profitable trader's Solana wallet below.</td></tr>`;
+  document.querySelectorAll("[data-wi]").forEach(c=>c.onchange=()=>W[c.dataset.wi].enabled=c.checked);document.querySelectorAll("[data-wd]").forEach(b=>b.onclick=()=>{W.splice(b.dataset.wd,1);drawW()})}
+$("addWal").onclick=()=>{const a=$("newWal").value.trim();if(a.length<32){toast("That doesn't look like a Solana address");return}W.push({address:a,name:$("newName").value.trim(),enabled:true});$("newWal").value=$("newName").value="";drawW()};
+$("saveWal").onclick=async()=>{const r=await api("/api/wallets",{wallets:W});toast(r.msg)};
+
+// events
+let E=[];async function loadEvents(){E=(await api("/api/events")).events||[];drawE()}
+function drawE(){$("evT").innerHTML=E.map((e,i)=>`<tr><td>${esc(e.name)}</td><td>${esc(e.date)}</td><td class="why">${esc((e.keywords||[]).join(", "))}</td><td><input type="checkbox" data-ei="${i}" ${e.enabled!==false?"checked":""} style="width:auto"></td><td><button class="btn" data-ed="${i}">Remove</button></td></tr>`).join("");
+  document.querySelectorAll("[data-ei]").forEach(c=>c.onchange=()=>E[c.dataset.ei].enabled=c.checked);document.querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>{E.splice(b.dataset.ed,1);drawE()})}
+$("addEv").onclick=()=>{if(!$("evName").value||!$("evDate").value){toast("Add a name and a date");return}E.push({name:$("evName").value,date:$("evDate").value,days_before:5,days_after:1,keywords:$("evKw").value.split(",").map(s=>s.trim().toUpperCase()).filter(Boolean),enabled:true});drawE()};
+$("saveEv").onclick=async()=>{const r=await api("/api/events",{events:E});toast(r.msg)};
+
+// log
+async function loadLog(){const r=await api("/api/log?which="+$("logWhich").value);const b=$("logBox");const atEnd=b.scrollTop+b.clientHeight>=b.scrollHeight-20;b.textContent=r.lines.join("\n")||"(empty)";if(atEnd)b.scrollTop=b.scrollHeight}
+$("logWhich").onchange=loadLog;
+$("openFolder").onclick=async()=>{const r=await api("/api/open_folder",{});toast(r.msg)};
+
+$("quitBtn").onclick=async()=>{if(!quitArmed){quitArmed=true;$("quitBtn").textContent="Click again to quit";setTimeout(()=>{quitArmed=false;$("quitBtn").textContent="Quit HatCryptoBot"},3000);return}
+  const r=await api("/api/quit",{});document.body.innerHTML=`<main style="padding:40px"><h1>HatCryptoBot is closed</h1><p class="sub">${esc(r.msg)}. Start it again from the HatCryptoBot icon.</p></main>`};
+let quitArmed=false;
+refresh();setInterval(refresh,3000);setInterval(()=>{if(!$("log").hidden)loadLog()},4000);
+window.addEventListener("resize",()=>S&&drawChart());
+</script>
+</body>
+</html>

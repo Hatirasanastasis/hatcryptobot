@@ -1,0 +1,6 @@
+{
+  "_help": "Wallets to copy. Get a Fomo trader's real Solana wallet with a wallet finder (their Fomo profile shows PnL but hides the trading wallet), or take wallets from GMGN / Birdeye top traders. Prefer traders profitable over the last 30 days, not just all-time. Set enabled false to pause one.",
+  "wallets": [
+    {"address": "PASTE_SOLANA_WALLET_ADDRESS_HERE", "name": "fomo: trader name", "enabled": false}
+  ]
+}

@@ -1,0 +1,29 @@
+{
+ "version": "1.6.0",
+ "files": {
+  "bot/.env.example": "d627ccce2b4b67934a4fcca8b9ae03b0f8ee45a0de7f75e85eab22b1e72dcd95",
+  "bot/GO_LIVE.md": "de661ca7a79ee277860dfe5495a11d697fd4b864cd720c0f4e7e77b466b82001",
+  "bot/README.md": "aed1752cdec321c04f135f8ca14ae4cb88b92b1935b492d628f0fe1f8b9c7328",
+  "bot/ai_brain.py": "7090409786d1058ad9138b96683d521df83d21526eb8195e7b9247d695c83d4c",
+  "bot/config.json": "5206d7f5cdcab13333b3303b618c5e5917596aaf5961da05f64b4bfd3ba05559",
+  "bot/copytrade.py": "2b1c1bde03cb725de8c2b4bbad3fb5654748159b8d1c846a4ebd95e6e70e45b0",
+  "bot/edge.py": "6cb9eed6c55e36c00486766e1fd92adb2db702824c0fdc415c64e64cb0459f01",
+  "bot/events.json": "30734ec23d19a5e70c69229f859eb267336508b0bb82d4e8779aa8118e64103a",
+  "bot/lessons.py": "8ac5564fc22f9a2df5c68c3c64780a591309e253fe57df85b937e265722a48f6",
+  "bot/market/config.json": "5665bc49e9ee7a2c69a0cef8b4b5e71a0803171a16d96f701815592f1d6695e8",
+  "bot/market/marketbot.py": "4369fbbac35254766b8069ea7502887a346c7de1d7527187cfef6f0b654ea8bc",
+  "bot/memebot.py": "ff4ae5a605f2d2e52629f590697f112b5f42a6b0a2c47253d2a5b781cbf33096",
+  "bot/model.py": "7aca888eaf073aad18a403c74997e4769a36eefc07f778b8e6881080cc00816e",
+  "bot/narrative.py": "062080c01dbfdc848c8c2756d336093758eef5f4029835ca68ae69f8816c1c2e",
+  "bot/replay.py": "9ad16c1ec98e49cfc7b92956a9d50fcd1a08891b7c5872c99b33bc9e94203564",
+  "bot/requirements.txt": "28639e751428925d251aec2d545287623302c48f8d9dc2f3bc6cfb8a1079dab1",
+  "bot/smartmoney.py": "61332032ffcf7e705905356a0349add13e821395f959766e1745eddefdb64b71",
+  "bot/sniper.py": "0ad3a23d1fe8e32434ee72f6a459c322a4f22c6bdbf848808bff1adaef94cfa1",
+  "bot/social.py": "6602ea74cdcc0026883fa24be0292a9706c5bba72d53509b6f181417fa30a673",
+  "bot/strategy.py": "6cd1fed4b36719c799e10c601ca3ff3a87b88a5338880dda87c03b4cdfa2e2a3",
+  "bot/stream.py": "86d4ab6de0f2fef5ec9f5732fbcf98f3b77d0e934dc89eae8342b2e3f8d98757",
+  "bot/wallets.json": "dd079e8f94ee041def1561098d89936200b8a631e7bcbe1d0bd943a3fad38e3d",
+  "ui.html": "8dc48b13a0a4460b07dbe617fa18a9ea63bc0677f584c960a57aa4dd9884d7fa",
+  "app/hatcryptobot.py": "0b21d2fc8f69a1231d907d8b2b29ea45d30893ff5d97d64bffc275c4212c2dd1"
+ }
+}

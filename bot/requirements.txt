@@ -1,0 +1,5 @@
+requests>=2.31
+solders>=0.21
+numpy>=1.26
+websockets>=12
+pillow>=10

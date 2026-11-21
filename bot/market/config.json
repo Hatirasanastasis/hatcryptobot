@@ -1,0 +1,15 @@
+{
+  "_note": "Regular coins on OKX. demo = OKX Demo Trading account: real OKX prices, orders on the demo account, sized as a $1000 account. Quote USDC (OKX Europe).",
+  "mode": "demo",
+  "exchange": "myokx",
+  "quote": "USDC",
+  "universe_size": 50,
+  "max_positions": 4,
+  "risk_per_trade_pct": 1.0,
+  "max_position_pct": 20.0,
+  "max_daily_loss": 60.0,
+  "ntfy_topic": "",
+  "min_volume_24h": 500000,
+  "demo_budget": 1000.0,
+  "data_from_live": true
+}

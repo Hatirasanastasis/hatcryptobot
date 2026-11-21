@@ -1,0 +1,36 @@
+{
+  "_help": "Hyped events the bots should watch. Coins whose name/ticker contains a keyword get extra attention from days_before until days_after the date. Add your own; set enabled false to pause one.",
+  "events": [
+    {
+      "name": "GTA 6 release",
+      "date": "2026-11-19",
+      "days_before": 5,
+      "days_after": 4,
+      "keywords": [
+        "GTA",
+        "GTA6",
+        "GTAVI",
+        "VICE",
+        "LEONIDA",
+        "LUCIA",
+        "JASON",
+        "ROCKSTAR"
+      ],
+      "enabled": true,
+      "source": "Rockstar's announced release date (PS5 / Xbox Series X|S)"
+    },
+    {
+      "name": "EXAMPLE: add your own event",
+      "date": "2026-12-25",
+      "days_before": 3,
+      "days_after": 1,
+      "keywords": [
+        "SANTA",
+        "XMAS",
+        "CHRISTMAS"
+      ],
+      "enabled": false,
+      "source": "edit me"
+    }
+  ]
+}
