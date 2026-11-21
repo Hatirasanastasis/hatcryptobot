@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.7.1"
+APP_VERSION = "1.7.2"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -436,7 +436,7 @@ def okx_snapshot():
     eq = hist[-1][1] if hist else None
     res = st.get("results", [])
     quote = (jread("market/config.json", {}) or {}).get("quote", "USDT")
-    return {"quote": quote, "equity": eq, "start": st.get("start_equity"), "open": len(pos), "closed": len(res),
+    return {"budget": (jread("market/config.json", {}) or {}).get("demo_budget", 1000), "quote": quote, "equity": eq, "start": st.get("start_equity"), "open": len(pos), "closed": len(res),
             "wins": sum(1 for r in res if r.get("pnl", 0) > 0),
             "positions": [{"sym": k, "strategy": p.get("strategy"), "cost": p.get("cost"),
                            "value": p.get("qty", 0) * p.get("last", p.get("entry_px", 0))} for k, p in pos.items()],
@@ -612,6 +612,30 @@ class H(BaseHTTPRequestHandler):
             return self._send(403, {"error": "forbidden"})
         u = urlparse(self.path)
         b = self._body()
+        if u.path == "/api/okx_budget":
+            try:
+                amt = float(b.get("amount"))
+            except (TypeError, ValueError):
+                return self._send(400, {"ok": False, "msg": "enter a number"})
+            if not 10 <= amt <= 1_000_000:
+                return self._send(400, {"ok": False, "msg": "budget must be between 10 and 1,000,000"})
+            was = running("okx")
+            if was:
+                stop("okx")
+            mc = jread("market/config.json", {}) or {}
+            mc["demo_budget"] = amt
+            jwrite("market/config.json", mc)
+            st = jread("market/state.json", {}) or {}
+            fresh = not st.get("pos")
+            if fresh:     # nothing open: start the balance, chart and limits over from the new amount
+                for k in ("start_equity", "peak_equity", "day", "day_start", "halted_until", "pause_until"):
+                    st[k] = None
+                st.update(killed=False, equity_history=[], results=[])
+                jwrite("market/state.json", st)
+            if was:
+                start("okx")
+            return self._send(200, {"ok": True, "msg": f"OKX budget set to {amt:,.0f}" +
+                                    (" — balance restarted" if fresh else " — applies fully once open coins are sold")})
         if u.path == "/api/update":
             threading.Thread(target=check_update, daemon=True).start()
             return self._send(200, {"ok": True, "msg": "checking for updates…"})

@@ -156,6 +156,9 @@ a{color:var(--accent2)}
     </div>
     <div class="row" style="margin:14px 0"><button class="btn go" data-start="okx">Start on OKX demo</button><button class="btn" data-stop="okx">Stop</button>
       <button class="btn" id="oxLog">Open its log</button></div>
+    <div class="card" style="margin-bottom:14px"><h2>Budget</h2>
+      <div class="row"><input id="oxBudget" type="number" min="10" step="100" style="max-width:180px"><button class="btn primary" id="oxBudgetSet">Set budget</button></div>
+      <p class="s" style="margin:8px 0 0">The most the bot uses on your OKX demo account (it holds much more). Changing it restarts the balance and chart when no coins are open.</p></div>
     <div class="card"><h2>Balance over time</h2><canvas id="oxChart"></canvas></div>
     <div class="card" style="margin-top:14px"><h2>Open positions</h2>
       <table><thead><tr><th>Coin</th><th>Strategy</th><th>In</th><th>Now</th><th>P&amp;L</th></tr></thead><tbody id="oxPos"></tbody></table></div>
@@ -308,8 +311,10 @@ function drawOkx(){const o=S.okx||{},q=o.quote||"USDC",st=o.start;
   $("oxOpen").textContent=o.open||0;$("oxRun").textContent=S.running.okx?"running":"stopped";$("oxRun").className="s "+(S.running.okx?"up":"");
   $("oxPos").innerHTML=(o.positions||[]).map(p=>{const pl=p.value-p.cost;return `<tr><td>${esc(p.sym)}</td><td><span class="tag">${esc(p.strategy||"")}</span></td><td>${(p.cost||0).toFixed(2)}</td><td>${(p.value||0).toFixed(2)}</td><td class="${pl>=0?"up":"down"}">${sgn(pl,2)} (${sgn(p.cost?pl/p.cost*100:0,1)}%)</td></tr>`}).join("")||`<tr><td colspan="5" class="why">No coins held right now.</td></tr>`;
   $("oxTr").innerHTML=(o.trades||[]).map(t=>`<tr><td>${esc((t.t||"").replace("T"," ").slice(5,16))}</td><td class="${t.side==="buy"?"up":"down"}">${esc((t.side||"").toUpperCase())}</td><td>${esc(t.sym)}</td><td><span class="tag">${esc(t.strategy||"")}</span></td><td>${(t.amt||0).toFixed(2)}</td><td class="${(t.pnl||0)>=0?"up":"down"}">${t.pnl!=null?sgn(t.pnl,2):""}</td><td class="why">${esc(t.why||"")}</td></tr>`).join("")||`<tr><td colspan="7" class="why">No trades yet.</td></tr>`;
+  if(document.activeElement!==$("oxBudget"))$("oxBudget").value=o.budget||1000;
   $("oxBlocked").textContent=(o.blocked||[]).join(", ")||"none so far";
   lineChart("oxChart",(o.history||[]).map(p=>p[1]),st||((o.history||[])[0]||[0,0])[1])}
+$("oxBudgetSet").onclick=async()=>{const r=await api("/api/okx_budget",{amount:$("oxBudget").value});toast(r.msg);refresh()};
 $("oxLog").onclick=()=>{show("log");$("logWhich").value="okx";loadLog()};
 function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
   const h=(S.equity_history||[]).map(p=>p[1]);x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
