@@ -1353,7 +1353,8 @@ class Bot:
             return
         self.state["last_autotune"] = time.time()
         import subprocess
-        self._tune_proc = subprocess.Popen([sys.executable, str(HERE / "replay.py"), "--autotune"], cwd=HERE,
+        self._tune_proc = subprocess.Popen([sys.executable, str(HERE / "replay.py"), "--autotune"]
+                                           + ([] if c.get("autotune", True) else ["--light"]), cwd=HERE,
                                            stdout=open(HERE / "data" / "autotune.log", "a"), stderr=subprocess.STDOUT)
         log.info("autotune: testing new settings on recorded data in the background")
 

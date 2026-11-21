@@ -14,6 +14,7 @@ import sys as _sys, os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))  # bundled Python does not add the script folder
 import argparse
 import copy
+import os
 import json
 import random
 import statistics
@@ -198,7 +199,19 @@ def summary(r):
 TUNABLE_PREFIXES = ("strategies.", "max_positions", "risk_per_trade_pct", "base.min_liquidity_usd")
 
 
-def autotune(samples=150, days=1.0, min_hours=3.0, min_trades=10):
+def lower_priority():
+    """Background job: never slow down the PC (lowest CPU priority)."""
+    try:
+        if os.name == "nt":
+            import ctypes
+            ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x00000040)  # IDLE
+        else:
+            os.nice(19)
+    except Exception:
+        pass
+
+
+def autotune(samples=150, days=1.0, min_hours=3.0, min_trades=10, light=False):
     """Search settings on recorded data; write data/tuned.json only if a candidate beats the
     current config on the unseen last 30% AND is profitable there AND traded enough.
     Never touches safety checks, loss limits or caps."""
@@ -214,6 +227,8 @@ def autotune(samples=150, days=1.0, min_hours=3.0, min_trades=10):
         edge.run(cfg, ticks)
     except Exception as e:
         print(f"edge check failed: {e}")
+    if light:
+        return                     # settings search is off: only the proven-strategy check and the model were needed
     keys = list(ticks)
     hours = (keys[-1] - keys[0]) / 3600 if keys else 0
     out = HERE / "data" / "tuned.json"
@@ -253,12 +268,14 @@ def autotune(samples=150, days=1.0, min_hours=3.0, min_trades=10):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--autotune", action="store_true", help="used by the bot every hour")
+    ap.add_argument("--light", action="store_true", help="only refresh the edge check and model (no settings search)")
     ap.add_argument("--optimize", action="store_true")
     ap.add_argument("--days", type=float, default=0)
     ap.add_argument("--samples", type=int, default=300)
     a = ap.parse_args()
     if a.autotune:
-        autotune(samples=a.samples if a.samples != 300 else 150, days=a.days or 1.0)
+        lower_priority()
+        autotune(samples=a.samples if a.samples != 300 else 150, days=a.days or 1.0, light=a.light)
         return
     cfg = load_cfg()
     ticks, sol = load(a.days)
