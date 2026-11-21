@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.6.0"
+APP_VERSION = "1.6.1"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -129,6 +129,7 @@ def check_update(apply=True):
         tmp = dst.with_name(dst.name + ".new")
         tmp.write_bytes(data)
         tmp.replace(dst)
+    apply_patches(man.get("patches") or [])
     (BOT / "version.txt").write_text(latest)
     # restart running bots so they use the new code (their state is saved on disk)
     again = [n for n in list(PROCS) if running(n)]
@@ -141,6 +142,29 @@ def check_update(apply=True):
                             and any(str(d).endswith("hatcryptobot.py") for d in staged) else "")
     print(f"  {UPDATE_STATUS['msg']}")
     return True
+
+
+def apply_patches(patches):
+    """Strategy improvements for the user's own config files (which updates never replace). Each patch runs once;
+    only strategy internals are patched — never budgets, keys, risk or anything set on the Settings page."""
+    done_f = BOT / "patches_done.json"
+    try:
+        done = set(json.loads(done_f.read_text()))
+    except Exception:
+        done = set()
+    for p in patches:
+        pid, path = p.get("id"), str(p.get("path", ""))
+        if not pid or pid in done or not path.startswith("strategies.") or p.get("file") not in ("config.json", "market/config.json"):
+            continue
+        cfg = jread(p["file"], {}) or {}
+        d = cfg
+        parts = path.split(".")
+        for k in parts[:-1]:
+            d = d.setdefault(k, {})
+        d[parts[-1]] = p.get("value")
+        jwrite(p["file"], cfg)
+        done.add(pid)
+    done_f.write_text(json.dumps(sorted(done)))
 
 
 def update_loop():

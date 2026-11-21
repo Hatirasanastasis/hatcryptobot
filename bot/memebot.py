@@ -64,7 +64,32 @@ http.headers["User-Agent"] = "memebot/3.0"
 
 # ============================================================================ setup
 
+def apply_patches():
+    """Strategy improvements shipped by updates (patches.json), applied once to the user's own config.json."""
+    pf, df = HERE / "patches.json", HERE / "patches_done.json"
+    try:
+        patches = json.loads(pf.read_text()) if pf.exists() else []
+        done = set(json.loads(df.read_text())) if df.exists() else set()
+    except Exception:
+        return
+    todo = [p for p in patches if p.get("id") not in done and p.get("file") == "config.json"
+            and str(p.get("path", "")).startswith("strategies.")]
+    if not todo or not CONFIG_PATH.exists():
+        return
+    cfg = json.loads(CONFIG_PATH.read_text())
+    for p in todo:
+        d = cfg
+        parts = p["path"].split(".")
+        for k in parts[:-1]:
+            d = d.setdefault(k, {})
+        d[parts[-1]] = p["value"]
+        done.add(p["id"])
+    CONFIG_PATH.write_text(json.dumps(cfg, indent=2))
+    df.write_text(json.dumps(sorted(done)))
+
+
 def load_config():
+    apply_patches()
     over = json.loads(CONFIG_PATH.read_text()) if CONFIG_PATH.exists() else {}
     cfg = S.deep_merge(S.DEFAULTS, over)
     if cfg["mode"] not in ("paper", "live"):

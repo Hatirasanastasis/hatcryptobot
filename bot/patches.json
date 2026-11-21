@@ -1,0 +1,9 @@
+[
+ {"id": "dip-exits-2026-11-21-a", "file": "config.json", "path": "strategies.dip.take_profit_pct", "value": 30},
+ {"id": "dip-exits-2026-11-21-b", "file": "config.json", "path": "strategies.dip.trail_activate_pct", "value": 15},
+ {"id": "dip-exits-2026-11-21-c", "file": "config.json", "path": "strategies.dip.trailing_stop_pct", "value": 12},
+ {"id": "dip-exits-2026-11-21-d", "file": "config.json", "path": "strategies.dip.profit_lock_keep_pct", "value": 50},
+ {"id": "dip-exits-2026-11-21-e", "file": "config.json", "path": "strategies.dip.breakeven_trigger_pct", "value": 15},
+ {"id": "dip-exits-2026-11-21-f", "file": "config.json", "path": "strategies.dip.stale_minutes", "value": 20},
+ {"id": "breakout-ratio-2026-11-21", "file": "config.json", "path": "strategies.breakout.min_buy_ratio", "value": 1.25}
+]
