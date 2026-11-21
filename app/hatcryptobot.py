@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.7.0"
+APP_VERSION = "1.7.1"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -440,7 +440,9 @@ def okx_snapshot():
             "wins": sum(1 for r in res if r.get("pnl", 0) > 0),
             "positions": [{"sym": k, "strategy": p.get("strategy"), "cost": p.get("cost"),
                            "value": p.get("qty", 0) * p.get("last", p.get("entry_px", 0))} for k, p in pos.items()],
-            "trades": list(reversed(st.get("trades", [])[-30:]))}
+            "trades": list(reversed(st.get("trades", [])[-100:])),
+            "history": hist[-1440:], "blocked": sorted(st.get("blocked", {})),
+            "pnl_closed": round(sum(r.get("pnl", 0) for r in res), 2)}
 
 
 SETTINGS = ["paper_start_sol", "live_budget_sol", "risk_per_trade_pct", "max_positions", "max_position_pct",

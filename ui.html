@@ -74,6 +74,7 @@ a{color:var(--accent2)}
 <nav aria-label="Menu">
   <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 20 20"><path d="M2 15 L7 9 L11 12 L18 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>HatCryptoBot</b></div>
   <button data-page="dash" aria-current="page"><span class="dot"></span>Dashboard</button>
+  <button data-page="okx"><span class="dot"></span>OKX demo</button>
   <button data-page="control"><span class="dot"></span>Start / Stop</button>
   <button data-page="strats"><span class="dot"></span>Strategies</button>
   <button data-page="trades"><span class="dot"></span>Trades</button>
@@ -142,6 +143,26 @@ a{color:var(--accent2)}
     <div class="card" style="margin-top:14px"><h2>AI brain — latest ratings</h2><p class="s" id="brainNote">—</p>
       <table><thead><tr><th>Coin</th><th>Hype</th><th>Danger</th><th>Why</th></tr></thead><tbody id="brainT"></tbody></table></div>
     <div class="card" style="margin-top:14px"><h2>Recently blocked</h2><pre class="s" id="brainEx" style="white-space:pre-wrap;margin:0">—</pre></div>
+  </section>
+
+  <!-- OKX DEMO -->
+  <section id="okx" hidden>
+    <h1>OKX demo</h1><p class="sub" id="okxSub">Regular coins on your OKX Demo Trading account.</p>
+    <div class="grid cards">
+      <div class="card"><div class="k">Balance</div><div class="v" id="oxBal">—</div><div class="s" id="oxStart">—</div></div>
+      <div class="card"><div class="k">Profit / loss</div><div class="v" id="oxPnl">—</div><div class="s" id="oxPnlS">—</div></div>
+      <div class="card"><div class="k">Win rate</div><div class="v" id="oxWin">—</div><div class="s" id="oxWinS">—</div></div>
+      <div class="card"><div class="k">Open coins</div><div class="v" id="oxOpen">0</div><div class="s" id="oxRun">—</div></div>
+    </div>
+    <div class="row" style="margin:14px 0"><button class="btn go" data-start="okx">Start on OKX demo</button><button class="btn" data-stop="okx">Stop</button>
+      <button class="btn" id="oxLog">Open its log</button></div>
+    <div class="card"><h2>Balance over time</h2><canvas id="oxChart"></canvas></div>
+    <div class="card" style="margin-top:14px"><h2>Open positions</h2>
+      <table><thead><tr><th>Coin</th><th>Strategy</th><th>In</th><th>Now</th><th>P&amp;L</th></tr></thead><tbody id="oxPos"></tbody></table></div>
+    <div class="card" style="margin-top:14px"><h2>Trades</h2>
+      <table><thead><tr><th>Time</th><th>Side</th><th>Coin</th><th>Strategy</th><th>Amount</th><th>P&amp;L</th><th>Why</th></tr></thead><tbody id="oxTr"></tbody></table></div>
+    <div class="card" style="margin-top:14px"><h2>Coins your account can't trade</h2><p class="s" id="oxBlocked">none so far</p>
+      <p class="s" style="margin:6px 0 0">OKX Europe refuses these for your account (error 50123); the bot skips them.</p></div>
   </section>
 
   <!-- TRADES -->
@@ -237,7 +258,7 @@ async function api(path,body){const r=await fetch(path,body?{method:"POST",heade
 document.querySelectorAll("nav button[data-page]").forEach(b=>b.onclick=()=>show(b.dataset.page));
 function show(p){document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==p);
   document.querySelectorAll("nav button[data-page]").forEach(b=>b.setAttribute("aria-current",b.dataset.page===p?"page":"false"));
-  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
+  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="okx"&&S)drawOkx(); if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
 
 const LABELS={scalp:"Scalp (quick +6%)",momentum:"Momentum",dip:"Dip buy",breakout:"Breakout",rocket:"Rocket",
   maj_momentum:"Regular: momentum",maj_dip:"Regular: dip",maj_breakout:"Regular: breakout",hype:"VIP post (Elon/Trump)",predict:"Prediction model"};
@@ -270,8 +291,26 @@ async function refresh(){
   $("kWallet").textContent=S.keys.wallet?"(set)":"(not set)";
   $("walAddrBox").innerHTML=S.wallet_address?`Address: <b style="word-break:break-all">${esc(S.wallet_address)}</b>`:"No bot wallet yet."; $("kJup").textContent=S.keys.jupiter?"(set)":"(not set)"; $("kRpc").textContent=S.keys.rpc?"(set)":"(not set)";
   $("ntfyTopic").textContent=S.ntfy||"—"; $("homeDir").textContent=S.home;
-  drawChart();
+  drawChart(); try{drawOkx()}catch(e){}
 }
+function lineChart(id,h,base){const c=$(id);if(!c||c.offsetParent===null)return;const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
+  x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
+  if(h.length<2){x.fillText("The chart fills in as the bot runs.",10,r.height/2);return}
+  let lo=Math.min(...h,base),hi=Math.max(...h,base);const pad=(hi-lo)*.1||.01;lo-=pad;hi+=pad;
+  const X=i=>8+(r.width-60)*i/(h.length-1),Y=v=>8+(r.height-16)*(1-(v-lo)/(hi-lo));
+  x.strokeStyle="#232a4a";x.setLineDash([4,4]);x.beginPath();x.moveTo(8,Y(base));x.lineTo(r.width-52,Y(base));x.stroke();x.setLineDash([]);
+  x.strokeStyle=h[h.length-1]>=base?"#35d39a":"#ff6b7a";x.lineWidth=2;x.beginPath();h.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
+  x.fillText(hi.toFixed(2),r.width-48,14);x.fillText(lo.toFixed(2),r.width-48,r.height-4)}
+function drawOkx(){const o=S.okx||{},q=o.quote||"USDC",st=o.start;
+  $("oxBal").textContent=o.equity!=null?o.equity.toFixed(2)+" "+q:"—";$("oxStart").textContent=st?`started at ${st.toFixed(2)} ${q}`:(S.running.okx?"connecting…":"not started");
+  if(o.equity!=null&&st){const d=o.equity-st;$("oxPnl").textContent=sgn(d,2);$("oxPnl").className="v "+(d>=0?"up":"down");$("oxPnlS").textContent=sgn(d/st*100,2)+"% · closed trades "+sgn(o.pnl_closed||0,2)+" "+q}
+  $("oxWin").textContent=o.closed?Math.round(o.wins/o.closed*100)+"%":"—";$("oxWinS").textContent=`${o.wins||0} won of ${o.closed||0} closed`;
+  $("oxOpen").textContent=o.open||0;$("oxRun").textContent=S.running.okx?"running":"stopped";$("oxRun").className="s "+(S.running.okx?"up":"");
+  $("oxPos").innerHTML=(o.positions||[]).map(p=>{const pl=p.value-p.cost;return `<tr><td>${esc(p.sym)}</td><td><span class="tag">${esc(p.strategy||"")}</span></td><td>${(p.cost||0).toFixed(2)}</td><td>${(p.value||0).toFixed(2)}</td><td class="${pl>=0?"up":"down"}">${sgn(pl,2)} (${sgn(p.cost?pl/p.cost*100:0,1)}%)</td></tr>`}).join("")||`<tr><td colspan="5" class="why">No coins held right now.</td></tr>`;
+  $("oxTr").innerHTML=(o.trades||[]).map(t=>`<tr><td>${esc((t.t||"").replace("T"," ").slice(5,16))}</td><td class="${t.side==="buy"?"up":"down"}">${esc((t.side||"").toUpperCase())}</td><td>${esc(t.sym)}</td><td><span class="tag">${esc(t.strategy||"")}</span></td><td>${(t.amt||0).toFixed(2)}</td><td class="${(t.pnl||0)>=0?"up":"down"}">${t.pnl!=null?sgn(t.pnl,2):""}</td><td class="why">${esc(t.why||"")}</td></tr>`).join("")||`<tr><td colspan="7" class="why">No trades yet.</td></tr>`;
+  $("oxBlocked").textContent=(o.blocked||[]).join(", ")||"none so far";
+  lineChart("oxChart",(o.history||[]).map(p=>p[1]),st||((o.history||[])[0]||[0,0])[1])}
+$("oxLog").onclick=()=>{show("log");$("logWhich").value="okx";loadLog()};
 function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
   const h=(S.equity_history||[]).map(p=>p[1]);x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
   if(h.length<2){x.fillText("The chart fills in as the bot runs.",10,r.height/2);return}
