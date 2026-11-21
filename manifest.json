@@ -1,10 +1,10 @@
 {
- "version": "1.7.2",
+ "version": "1.7.3",
  "files": {
   "bot/.env.example": "d627ccce2b4b67934a4fcca8b9ae03b0f8ee45a0de7f75e85eab22b1e72dcd95",
   "bot/GO_LIVE.md": "de661ca7a79ee277860dfe5495a11d697fd4b864cd720c0f4e7e77b466b82001",
   "bot/README.md": "aed1752cdec321c04f135f8ca14ae4cb88b92b1935b492d628f0fe1f8b9c7328",
-  "bot/ai_brain.py": "c0d62eb2f2c66b2ce778ea31f661612c8f65b0ebfcdb8df3b2d08fb680aca9e0",
+  "bot/ai_brain.py": "84144812611babd620bef26db482e6c31c131b586bfa7d72ba49552f2e8de21a",
   "bot/config.json": "53f08336b6b092e1a519c81675e03d9aec1d124ecbe166d3c7238bf3cbd17bf3",
   "bot/copytrade.py": "2b1c1bde03cb725de8c2b4bbad3fb5654748159b8d1c846a4ebd95e6e70e45b0",
   "bot/edge.py": "6cb9eed6c55e36c00486766e1fd92adb2db702824c0fdc415c64e64cb0459f01",
@@ -24,7 +24,7 @@
   "bot/strategy.py": "6cd1fed4b36719c799e10c601ca3ff3a87b88a5338880dda87c03b4cdfa2e2a3",
   "bot/stream.py": "86d4ab6de0f2fef5ec9f5732fbcf98f3b77d0e934dc89eae8342b2e3f8d98757",
   "bot/wallets.json": "dd079e8f94ee041def1561098d89936200b8a631e7bcbe1d0bd943a3fad38e3d",
-  "ui.html": "a7937da6044be1a8f2d77e99a11239aba3eaf36875c90065c62cc8dc56b48ade",
-  "app/hatcryptobot.py": "eefb9f722c6e3e38a936186f413539792afee64d57c08a39afa25b974451eb3e"
+  "ui.html": "90d00083ed13e716d74261c0664e1db91c1d298befbbe428eec62dbc30b9123d",
+  "app/hatcryptobot.py": "bab55ad57df1ad4ac8863a3d688ec54cc3e6e37fbb30683a6442eff5613f987a"
  }
 }

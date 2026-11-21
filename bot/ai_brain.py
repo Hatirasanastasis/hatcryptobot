@@ -102,13 +102,13 @@ class AIBrain:
                 self.verdicts, self.note = d.get("coins", {}), d.get("note", "")
         except Exception:
             pass
-        self.grok_key = os.getenv("XAI_API_KEY", "").strip()
+        self.grok_key = ""                     # Grok removed at the user's request (paid API)
         self.grok_search = self.cfg.get("grok_x_search", True)
         key = os.getenv("ANTHROPIC_API_KEY", "").strip()
         if not self.cfg["enabled"]:
             self.status = "switched off in settings"
         elif not key:
-            self.status = "on (Grok)" if self.grok_key else "no Anthropic or Grok API key (add one in Wallet & keys)"
+            self.status = "off — no AI key (optional)"
         else:
             try:
                 import anthropic

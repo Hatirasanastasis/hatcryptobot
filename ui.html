@@ -199,7 +199,6 @@ a{color:var(--accent2)}
       <label>OKX demo API secret<input id="okx_secret" type="password"></label>
       <label>OKX demo API passphrase<input id="okx_pass" type="password" placeholder="the passphrase you chose"></label>
       <label>Anthropic API key — turns on the AI brain (console.anthropic.com) <span id="kAi" class="help"></span><input id="anthropic" type="password" placeholder="sk-ant-…"></label>
-      <label>Grok (xAI) API key — second AI opinion that can read X/Twitter live (console.x.ai) <span id="kGrok" class="help"></span><input id="xai" type="password" placeholder="xai-…"></label>
       <label>Reddit app id (optional)<input id="reddit_id" type="password"></label>
       <label>Reddit app secret (optional)<input id="reddit_secret" type="password"></label>
       <label>X / Twitter bearer token (optional)<input id="x_token" type="password"></label>
@@ -282,7 +281,7 @@ async function refresh(){
   $("okxOpen").textContent=o.open||0;$("okxWin").textContent=o.closed?`${o.wins} won of ${o.closed} closed`:"no closed trades yet";
   $("okxState").textContent=r.okx?"Running on your OKX demo account":(S.okx_error?"⚠ "+S.okx_error:(S.okx_keys?"Stopped":"Add your OKX demo keys in Wallet & keys first"));
   $("kOkx").textContent=S.okx_keys?"(set)":"(not set)";
-  $("kAi").textContent=S.ai_key?"(set)":"(not set)"; $("kGrok").textContent=S.grok_key?"(set)":"(not set)";
+  $("kAi").textContent=S.ai_key?"(set)":"(not set)";
   $("botState").textContent=r.bot?"Running":"Stopped"; $("sniperState").textContent=r.sniper?"Running":"Stopped"; $("copyState").textContent=r.copy?"Running":"Stopped";
   $("posT").innerHTML=S.positions.length?S.positions.map(p=>{const ch=(p.value/p.cost-1)*100;return `<tr><td>${esc(p.sym)}</td><td><span class="tag">${esc(p.strategy)}</span></td><td>${p.cost.toFixed(4)}</td><td>${p.value.toFixed(4)}</td><td class="${ch>=0?"up":"down"}">${sgn(ch,1)}%</td></tr>`}).join(""):`<tr><td colspan="5" class="why">No coins held right now.</td></tr>`;
   $("tradeT").innerHTML=S.trades.length?S.trades.map(t=>`<tr><td>${esc((t.time||"").slice(11,19))}</td><td class="${t.side==="buy"?"up":"down"}">${t.side.toUpperCase()}</td><td>${esc(t.symbol)}</td><td><span class="tag">${esc(t.strategy||"")}</span></td><td>${(t.sol||0).toFixed(4)}</td><td class="${(t.pnl_sol||0)>=0?"up":"down"}">${t.pnl_sol!=null?sgn(t.pnl_sol,4):""}</td><td class="why">${esc(t.reason||"")}</td></tr>`).join(""):`<tr><td colspan="7" class="why">No trades yet.</td></tr>`;
@@ -339,7 +338,7 @@ async function loadBrain(){let B;try{B=await api("/api/brain")}catch(e){return}
     ai_exit:["AI exits","sold early, story died"],smart_buy:["Smart-money buys","2+ smart wallets bought"]};
   $("brainCards").innerHTML=Object.keys(L).map(k=>`<div><div class="k">${L[k][0]}</div><div class="v">${B.counts[k]||0}</div><div class="s">${L[k][1]}</div></div>`).join("");
   $("brainSmart").textContent=`Smart money: following ${B.smart_wallets} wallets (early on 2+ winners), learned from ${B.winners_studied} winners. Smart trades: ${B.smart_trades}, ${B.smart_wins} won.`;
-  $("brainNote").textContent=!B.ai_key?"Add an Anthropic or Grok API key in Wallet & keys to turn the AI brain on.":(B.ai_time?"Updated "+new Date(B.ai_time*1000).toLocaleTimeString()+(B.ai_note?" — "+B.ai_note:""):"Waiting for the first rating (every 10 min while the bot runs).");
+  $("brainNote").textContent=!B.ai_key?"Add an Anthropic API key in Wallet & keys to turn the AI brain on (optional, paid).":(B.ai_time?"Updated "+new Date(B.ai_time*1000).toLocaleTimeString()+(B.ai_note?" — "+B.ai_note:""):"Waiting for the first rating (every 10 min while the bot runs).");
   $("brainT").innerHTML=(B.ai_coins||[]).map(c=>`<tr><td>${esc(c.sym||"?")}${c.sell_now?" (sell)":""}</td><td>${c.hype}</td><td>${c.danger}</td><td>${esc(c.reason||"")}</td></tr>`).join("")||"<tr><td colspan=4>no ratings yet</td></tr>";
   const ex=[].concat(...["holder","rug","ai_veto","model_veto","ai_exit"].map(k=>B.examples[k]||[]));$("brainEx").textContent=ex.sort().reverse().slice(0,12).join("\n")||"nothing blocked yet"}
 $("newWal").onclick=async()=>{let b={};if(S.wallet_address&&!S.wallet_address.startsWith("invalid")){const c=prompt("A bot wallet already exists. Move its money out first. Type REPLACE to create a new one:");if(c!=="REPLACE")return;b.confirm="REPLACE"}
@@ -363,7 +362,7 @@ function fillSettings(){if(!S)return;$("setForm").innerHTML=Object.entries(SETL)
 $("saveSet").onclick=async()=>{const b={};Object.keys(SETL).forEach(k=>b[k]=$("set_"+k).value);const r=await api("/api/settings",b);toast(r.msg)};
 
 // keys
-$("saveKeys").onclick=async()=>{const b={};["wallet","jupiter","rpc","okx_key","okx_secret","okx_pass","reddit_id","reddit_secret","x_token","cryptopanic","anthropic","xai"].forEach(k=>{b[k]=$(k).value.trim();$(k).value=""});const r=await api("/api/keys",b);toast(r.msg);refresh()};
+$("saveKeys").onclick=async()=>{const b={};["wallet","jupiter","rpc","okx_key","okx_secret","okx_pass","reddit_id","reddit_secret","x_token","cryptopanic","anthropic"].forEach(k=>{b[k]=$(k).value.trim();$(k).value=""});const r=await api("/api/keys",b);toast(r.msg);refresh()};
 
 // copy wallets
 let W=[];async function loadWallets(){W=(await api("/api/wallets")).wallets||[];W=W.filter(w=>!String(w.address).startsWith("PASTE"));drawW()}
