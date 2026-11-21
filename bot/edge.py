@@ -26,7 +26,7 @@ import strategy as S
 
 HERE = Path(__file__).resolve().parent
 EDGE_PATH = HERE / "data" / "edge.json"
-RULES = ["scalp", "momentum", "dip", "breakout", "rocket", "maj_momentum", "maj_dip", "maj_breakout"]
+RULES = ["runner", "scalp", "momentum", "dip", "breakout", "rocket", "maj_momentum", "maj_dip", "maj_breakout"]
 
 
 def _as_pair(r):
