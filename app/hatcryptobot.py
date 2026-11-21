@@ -137,7 +137,8 @@ def check_update(apply=True):
     for n in again:
         start(n, LIVE.get(n, False))
     UPDATE_STATUS["msg"] = f"updated to {latest}" + (f", restarted: {', '.join(again)}" if again else "") + \
-                           (" — restart the app to finish" if any(str(d).endswith("hatcryptobot.py") for d in staged) else "")
+                           (" — restart the app to finish" if vtuple(latest) > vtuple(APP_VERSION)
+                            and any(str(d).endswith("hatcryptobot.py") for d in staged) else "")
     print(f"  {UPDATE_STATUS['msg']}")
     return True
 
