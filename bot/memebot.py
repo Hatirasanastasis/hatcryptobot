@@ -1390,7 +1390,7 @@ class Bot:
         st_social = ", ".join(f"{k}: {v}" for k, v in self.social.status.items())
         print(f"social     {st_social or 'starting (sources check in once a minute)'}")
         print(f"smart $    {self.smart.status if self.smart.on else 'off'}")
-        print(f"AI brain   {self.ai.status}" + (f" — {self.ai.cfg['model']}, {len(self.ai.verdicts)} coins rated" if self.ai.on else ""))
+        print(f"AI brain   {self.ai.status}" + (f" — {self.ai.who()}, {len(self.ai.verdicts)} coins rated" if self.ai.on else ""))
         self.pred.refresh()
         mm = self.pred.m
         if mm:

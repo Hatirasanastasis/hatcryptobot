@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.6.2"
+APP_VERSION = "1.7.0"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -384,7 +384,8 @@ def snapshot():
         "okx": okx_snapshot(),
         "okx_error": ("" if running("okx") else next((l for l in reversed(tail(BOT / "okx-errors.log", 40))
                                                        if l.startswith("OKX ")), "")[:300]),
-        "ai_key": bool(env.get("ANTHROPIC_API_KEY")),
+        "ai_key": bool(env.get("ANTHROPIC_API_KEY") or env.get("XAI_API_KEY")),
+        "grok_key": bool(env.get("XAI_API_KEY")),
         "wallet_address": wallet_address(env),
         "okx_keys": bool(env.get("DEMO_API_KEY") and env.get("DEMO_API_SECRET") and env.get("DEMO_API_PASSWORD")),
     }
@@ -424,7 +425,7 @@ def brain_stats():
             "ai_coins": [{k: v.get(k) for k in ("sym", "hype", "danger", "reason", "sell_now")} for v in coins[:12]],
             "smart_wallets": smart, "winners_studied": len(sm.get("done") or {}),
             "smart_trades": len(ai_trades), "smart_wins": sum(1 for r in ai_trades if r.get("pnl_sol", 0) > 0),
-            "ai_key": bool(read_env().get("ANTHROPIC_API_KEY"))}
+            "ai_key": bool(read_env().get("ANTHROPIC_API_KEY") or read_env().get("XAI_API_KEY"))}
 
 
 def okx_snapshot():
@@ -725,7 +726,7 @@ class H(BaseHTTPRequestHandler):
                 write_env({"SOLANA_PRIVATE_KEY": b.get("wallet"), "JUPITER_API_KEY": b.get("jupiter"), "RPC_URL": b.get("rpc"),
                            "REDDIT_CLIENT_ID": b.get("reddit_id"), "REDDIT_CLIENT_SECRET": b.get("reddit_secret"),
                            "X_BEARER_TOKEN": b.get("x_token"), "CRYPTOPANIC_KEY": b.get("cryptopanic"),
-                           "ANTHROPIC_API_KEY": b.get("anthropic"),
+                           "ANTHROPIC_API_KEY": b.get("anthropic"), "XAI_API_KEY": b.get("xai"),
                            "DEMO_API_KEY": b.get("okx_key"), "DEMO_API_SECRET": b.get("okx_secret"),
                            "DEMO_API_PASSWORD": b.get("okx_pass")})
                 return self._send(200, {"ok": True, "msg": "keys saved on this PC only"})
