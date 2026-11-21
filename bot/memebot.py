@@ -576,6 +576,21 @@ class Bot:
         st.setdefault("killed", False)
         st.setdefault("loss_streak", 0)
         st["watch"] = {m: w for m, w in st["watch"].items() if isinstance(w, dict) and "strategy" in w}
+        if self.cfg["mode"] == "paper":
+            ref = st.get("paper_start_ref")
+            if ref is None:
+                st["paper_start_ref"] = self.cfg["paper_start_sol"]
+            elif abs(ref - self.cfg["paper_start_sol"]) > 1e-6 and not st["positions"]:
+                # demo balance changed in Settings: start the paper money over from it (like "Restart demo")
+                log.warning("demo balance changed %.4f → %.4f SOL — starting the demo over", ref, self.cfg["paper_start_sol"])
+                st["paper_sol"] = self.cfg["paper_start_sol"]
+                st["paper_start_ref"] = self.cfg["paper_start_sol"]
+                for k in ("start_equity", "peak_equity", "day", "day_start", "halted_until", "pause_until"):
+                    st[k] = None
+                st.update(killed=False, equity_history=[], loss_streak=0)
+            if st["killed"] and not st["positions"] and not st["results"]:
+                st["killed"] = False             # a stop with no trades behind it was a false alarm
+                st["start_equity"] = st["peak_equity"] = None
         for p in st["positions"].values():  # upgrade v2 positions
             p.setdefault("strategy", "momentum")
             p.setdefault("realized_sol", 0.0)
@@ -781,7 +796,17 @@ class Bot:
         s["peak_equity"] = max(s["peak_equity"], eq)
         if s["killed"]:
             return False
-        if eq <= s["peak_equity"] * (1 - c["max_drawdown_pct"] / 100):
+        drop = eq <= s["peak_equity"] * (1 - c["max_drawdown_pct"] / 100)
+        if drop and (not (s["results"] or s["positions"]) or time.time() - s.get("dd_seen", time.time()) < 60):
+            # never on a balance with no trading behind it; and the drop must still be there a minute later
+            # (a price glitch on one coin must not sell everything)
+            s.setdefault("dd_seen", time.time())
+            if not (s["results"] or s["positions"]):
+                s["peak_equity"] = eq
+            drop = False
+        elif not drop:
+            s.pop("dd_seen", None)
+        if drop:
             log.error("max drawdown %.0f%% hit — selling everything and stopping for good", c["max_drawdown_pct"])
             notify(c, "Bot stopped", f"Max drawdown {c['max_drawdown_pct']}% hit. Sold everything.", "warning")
             self.sell_all("kill switch")
