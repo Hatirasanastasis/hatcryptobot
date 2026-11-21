@@ -1340,15 +1340,16 @@ class Bot:
         """Every hour, run replay.py --autotune in a separate process (keeps trading fast).
         Adopt its settings only when they beat the current ones on data they weren't tuned on."""
         c = self.cfg
-        if not c.get("autotune", True):
-            return
+        # the background job ALWAYS runs: it refreshes the proven-strategy check (edge) and the model.
+        # "autotune": false only stops it from changing settings by itself.
         proc = getattr(self, "_tune_proc", None)
         if proc is not None:
             if proc.poll() is None:
                 return
             self._tune_proc = None
-            self.apply_tuned()
-        if time.time() - self.state.get("last_autotune", 0) < c.get("autotune_minutes", 60) * 60:
+            if c.get("autotune", True):
+                self.apply_tuned()
+        if time.time() - self.state.get("last_autotune", 0) < min(30, c.get("autotune_minutes", 60)) * 60:
             return
         self.state["last_autotune"] = time.time()
         import subprocess
