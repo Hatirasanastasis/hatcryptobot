@@ -210,7 +210,7 @@ a{color:var(--accent2)}
   <section id="copy" hidden>
     <h1>Copy-trading</h1><p class="sub">Wallets to copy (e.g. top Fomo traders' real wallets). The bot copies their buys and sells with its safety checks in front.</p>
     <div class="card"><table><thead><tr><th>Wallet address</th><th>Name</th><th>On</th><th></th></tr></thead><tbody id="walT"></tbody></table>
-      <div class="row" style="margin-top:12px"><input id="newWal" placeholder="Solana wallet address" style="flex:2"><input id="newName" placeholder="name, e.g. fomo: alice" style="flex:1"><button class="btn" id="addWal">Add</button><button class="btn primary" id="saveWal">Save</button></div></div>
+      <div class="row" style="margin-top:12px"><input id="newWal" placeholder="Solana address, or 0x… address (Base / Ethereum / BNB)" style="flex:2"><input id="newName" placeholder="name, e.g. fomo: alice" style="flex:1"><button class="btn" id="addWal">Add</button><button class="btn primary" id="saveWal">Save</button></div></div>
   </section>
 
   <!-- EVENTS -->
@@ -366,9 +366,9 @@ $("saveKeys").onclick=async()=>{const b={};["wallet","jupiter","rpc","okx_key","
 
 // copy wallets
 let W=[];async function loadWallets(){W=(await api("/api/wallets")).wallets||[];W=W.filter(w=>!String(w.address).startsWith("PASTE"));drawW()}
-function drawW(){$("walT").innerHTML=W.length?W.map((w,i)=>`<tr><td>${esc(w.address)}</td><td>${esc(w.name||"")}</td><td><input type="checkbox" data-wi="${i}" ${w.enabled!==false?"checked":""} style="width:auto"></td><td><button class="btn" data-wd="${i}">Remove</button></td></tr>`).join(""):`<tr><td colspan="4" class="why">No wallets yet. Add a profitable trader's Solana wallet below.</td></tr>`;
+function drawW(){$("walT").innerHTML=W.length?W.map((w,i)=>`<tr><td>${esc(w.address)}</td><td>${esc(w.name||"")}</td><td><input type="checkbox" data-wi="${i}" ${w.enabled!==false?"checked":""} style="width:auto"></td><td><button class="btn" data-wd="${i}">Remove</button></td></tr>`).join(""):`<tr><td colspan="4" class="why">No wallets yet. Add a profitable trader's wallet below — Solana, or 0x for Base / Ethereum / BNB Chain.</td></tr>`;
   document.querySelectorAll("[data-wi]").forEach(c=>c.onchange=()=>W[c.dataset.wi].enabled=c.checked);document.querySelectorAll("[data-wd]").forEach(b=>b.onclick=()=>{W.splice(b.dataset.wd,1);drawW()})}
-$("addWal").onclick=()=>{const a=$("newWal").value.trim();if(a.length<32){toast("That doesn't look like a Solana address");return}W.push({address:a,name:$("newName").value.trim(),enabled:true});$("newWal").value=$("newName").value="";drawW()};
+$("addWal").onclick=()=>{const a=$("newWal").value.trim();if(!(/^0x[0-9a-fA-F]{40}$/.test(a)||/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a))){toast("That's not a Solana or 0x wallet address");return}W.push({address:a,name:$("newName").value.trim(),enabled:true});$("newWal").value=$("newName").value="";drawW()};
 $("saveWal").onclick=async()=>{const r=await api("/api/wallets",{wallets:W});toast(r.msg)};
 
 // events

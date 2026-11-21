@@ -35,6 +35,7 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
+import evmcopy as EVM
 import memebot as M
 import strategy as S
 from strategy import SOL_MINT
@@ -89,6 +90,7 @@ class Copier:
         self.owner = str(self.kp.pubkey()) if self.kp else None
         self.st = self.load_state()
         self.recent_buys = defaultdict(dict)       # mint → {wallet: ts}
+        self.evm = EVM.EvmCopy(c, self.st, log, lambda t, msg, tag="": M.notify(self.cfg, t, msg, tag))
 
     # ------------------------------------------------------------------ state
     def load_state(self):
@@ -351,11 +353,17 @@ class Copier:
                 sys.exit("not confirmed")
         while True:
             try:
-                for w in self.wallets():
+                ws_all = self.wallets()
+                self.evm.poll([w for w in ws_all if w["address"].lower().startswith("0x")])
+                for w in [w for w in ws_all if not w["address"].lower().startswith("0x")]:
                     for sig, mint, dt, dsol, ts, pre_amt in self.new_swaps(w["address"]):
                         self.on_swap(w, sig, mint, dt, dsol, ts, pre_amt)
                     time.sleep(0.3)
                 self.manage()
+                self.evm.manage({k: self.c[k] for k in ("stop_loss_pct", "take_profit_pct", "take_profit_sell_pct",
+                                                         "trail_activate_pct", "trailing_stop_pct", "breakeven_trigger_pct",
+                                                         "breakeven_lock_pct", "stale_minutes", "stale_min_gain_pct",
+                                                         "profit_lock_keep_pct")})
                 self.save()
                 time.sleep(self.c["poll_seconds"])
             except KeyboardInterrupt:
@@ -371,6 +379,7 @@ class Copier:
         print(f"copies    {len(res)} closed, {sum(1 for r in res if r['pnl'] > 0)} winners, total {sum(r['pnl'] for r in res):+.4f} SOL")
         for m, p in self.st["pos"].items():
             print(f"open      {p['sym']:<10} {p['cost0']:.3f} SOL  following {p['leader']}")
+        print(self.evm.status_line())
         if self.st["dropped"]:
             print(f"dropped   {', '.join(w[:8] for w in self.st['dropped'])}")
 
