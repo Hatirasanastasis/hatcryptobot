@@ -175,7 +175,7 @@ DEFAULTS = {
             "stale_minutes": 30, "stale_min_gain_pct": 5,
             "max_position_pct": 10,
         },
-        "runner": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 20, "take_profit_sell_pct": 100, "trail_activate_pct": 1000, "trailing_stop_pct": 1000, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 30, "stale_min_gain_pct": 1000, "max_position_pct": 12, "vol_stop": False},
+        "runner": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 30, "take_profit_sell_pct": 100, "trail_activate_pct": 15, "trailing_stop_pct": 10, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 60, "stale_min_gain_pct": 1000, "max_position_pct": 12, "vol_stop": False},
         "smart": {
             # bought when 2+ proven early-buyer wallets (smart money) bought the same coin in the last 20 min
             "enabled": True, "min_liquidity_usd": 30000, "max_m5_pct": 20, "max_h1_pct": 300,

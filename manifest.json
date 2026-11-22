@@ -1,11 +1,11 @@
 {
- "version": "1.9.1",
+ "version": "1.9.2",
  "files": {
   "bot/.env.example": "d627ccce2b4b67934a4fcca8b9ae03b0f8ee45a0de7f75e85eab22b1e72dcd95",
   "bot/GO_LIVE.md": "de661ca7a79ee277860dfe5495a11d697fd4b864cd720c0f4e7e77b466b82001",
   "bot/README.md": "aed1752cdec321c04f135f8ca14ae4cb88b92b1935b492d628f0fe1f8b9c7328",
   "bot/ai_brain.py": "84144812611babd620bef26db482e6c31c131b586bfa7d72ba49552f2e8de21a",
-  "bot/config.json": "353c527eaf54b6be2bd6179837782901522001f2b22b2fdff416869a5aeebb39",
+  "bot/config.json": "da683521ad3e00dd259b3680a049204d1fcdf09061b5de7ecf79fe4bd7be6c40",
   "bot/copytrade.py": "420f739297d754704db567534bddcb417527f564d41640115bdacc2e56b7788f",
   "bot/edge.py": "9883995720de4b9b4c6d223f119c8594cb70cf76cd34810d98b31f6d088569e9",
   "bot/events.json": "30734ec23d19a5e70c69229f859eb267336508b0bb82d4e8779aa8118e64103a",
@@ -16,16 +16,16 @@
   "bot/memebot.py": "05573d740d5266807a1b88e5e036224b328d2693955e30454f212409cbf345e2",
   "bot/model.py": "7aca888eaf073aad18a403c74997e4769a36eefc07f778b8e6881080cc00816e",
   "bot/narrative.py": "062080c01dbfdc848c8c2756d336093758eef5f4029835ca68ae69f8816c1c2e",
-  "bot/patches.json": "01d4e228788c890a770f03a833707488a554fd976cc61c876c3ac29ca3e7b725",
+  "bot/patches.json": "8759795af8adb5b78fd05dbd42db8295c033e63b9c06ab48b1e0f3779cef69f8",
   "bot/replay.py": "8898c71572b0984d8a029dc509a6fa5a6b11d5cfafdad92572ed3789ec43c707",
   "bot/requirements.txt": "28639e751428925d251aec2d545287623302c48f8d9dc2f3bc6cfb8a1079dab1",
   "bot/smartmoney.py": "61332032ffcf7e705905356a0349add13e821395f959766e1745eddefdb64b71",
   "bot/sniper.py": "0ad3a23d1fe8e32434ee72f6a459c322a4f22c6bdbf848808bff1adaef94cfa1",
   "bot/social.py": "6602ea74cdcc0026883fa24be0292a9706c5bba72d53509b6f181417fa30a673",
-  "bot/strategy.py": "884f6f4e869f8b8436460ec2fe99b4287ed2fe77308ca857f3e4b8be88f6db74",
+  "bot/strategy.py": "6bd077d7e064035d2fec5ab662409561bedf61aba71f5e679f9ba5fc1a370cfb",
   "bot/stream.py": "86d4ab6de0f2fef5ec9f5732fbcf98f3b77d0e934dc89eae8342b2e3f8d98757",
   "bot/wallets.json": "dd079e8f94ee041def1561098d89936200b8a631e7bcbe1d0bd943a3fad38e3d",
   "ui.html": "82295a1b05a25bcff2ac6a96f948f2475498fcc7e258aaf715454aef6c813511",
-  "app/hatcryptobot.py": "67a2daa2ae2d3a62c9a74bde2d91d3bb1d221ed1404b2800140567cd8ad6ac2e"
+  "app/hatcryptobot.py": "264ac0ecf20d4310d8ec25a441a793af463e93e998e0f8aba343429054332101"
  }
 }

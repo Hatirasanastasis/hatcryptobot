@@ -134,5 +134,35 @@
    "dip",
    "momentum"
   ]
+ },
+ {
+  "id": "runner-exits-2026-11-22-take_profit_pct",
+  "file": "config.json",
+  "path": "strategies.runner.take_profit_pct",
+  "value": 30
+ },
+ {
+  "id": "runner-exits-2026-11-22-take_profit_sell_pct",
+  "file": "config.json",
+  "path": "strategies.runner.take_profit_sell_pct",
+  "value": 100
+ },
+ {
+  "id": "runner-exits-2026-11-22-trail_activate_pct",
+  "file": "config.json",
+  "path": "strategies.runner.trail_activate_pct",
+  "value": 15
+ },
+ {
+  "id": "runner-exits-2026-11-22-trailing_stop_pct",
+  "file": "config.json",
+  "path": "strategies.runner.trailing_stop_pct",
+  "value": 10
+ },
+ {
+  "id": "runner-exits-2026-11-22-stale_minutes",
+  "file": "config.json",
+  "path": "strategies.runner.stale_minutes",
+  "value": 60
  }
 ]
