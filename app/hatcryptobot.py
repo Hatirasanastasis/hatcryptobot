@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.11.0"
+APP_VERSION = "1.12.0"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -226,6 +226,81 @@ def wallet_address(env=None):
         return ""
     kp = parse_keypair(raw)
     return str(kp.pubkey()) if kp else "invalid key — this is not a Solana private key (wrong box?)"
+
+
+def _post_json(url, body, headers=None, timeout=15):
+    import urllib.request
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json",
+                                                                              **(headers or {})})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.loads(r.read())
+
+
+def test_connection(what):
+    """Live check of one connection. Returns (ok, plain-language message)."""
+    import urllib.request
+    import urllib.error
+    env = read_env()
+    rpc = env.get("RPC_URL") or "https://api.mainnet-beta.solana.com"
+    try:
+        if what == "wallet":
+            addr = wallet_address(env)
+            if not addr:
+                return False, "No bot wallet yet — press Create bot wallet."
+            if addr.startswith("invalid"):
+                return False, "The saved wallet key is not a Solana key — press Create bot wallet to fix it."
+            bal = _post_json(rpc, {"jsonrpc": "2.0", "id": 1, "method": "getBalance", "params": [addr]})["result"]["value"] / 1e9
+            return True, f"Wallet ready: {bal:.4f} SOL" + ("" if bal else " — send SOL to it to trade real money")
+        if what == "jupiter":
+            key = env.get("JUPITER_API_KEY")
+            if not key:
+                return False, "No Jupiter key yet — get the free key, paste it, Save & test."
+            url = ("https://api.jup.ag/swap/v1/quote?inputMint=So11111111111111111111111111111111111111112"
+                   "&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=10000000&slippageBps=50")
+            with urllib.request.urlopen(urllib.request.Request(url, headers={"x-api-key": key}), timeout=15) as r:
+                q = json.loads(r.read())
+            return True, f"Jupiter works: 0.01 SOL ≈ {int(q['outAmount']) / 1e6:.2f} USDC"
+        if what == "rpc":
+            if not env.get("RPC_URL"):
+                return None, "Optional. Without it the free public server is used (slower, can block)."
+            j = _post_json(rpc, {"jsonrpc": "2.0", "id": 1, "method": "getHealth"})
+            return (j.get("result") == "ok"), ("Fast server works" if j.get("result") == "ok" else f"Server answered: {j}")
+        if what == "okx":
+            k, s, p = env.get("DEMO_API_KEY"), env.get("DEMO_API_SECRET"), env.get("DEMO_API_PASSWORD")
+            if not (k and s and p):
+                return False, "Paste all three: API key, secret key and passphrase."
+            import ccxt
+            last = ""
+            for ex_id in ("myokx", "okx"):
+                ex = getattr(ccxt, ex_id)({"apiKey": k, "secret": s, "password": p, "enableRateLimit": True})
+                ex.set_sandbox_mode(True)
+                try:
+                    free = ex.fetch_balance().get("free") or {}
+                    cash = {c: round(float(free.get(c) or 0), 2) for c in ("USDC", "USDT", "EUR", "USD") if free.get(c)}
+                    mc = jread("market/config.json", {}) or {}
+                    mc["exchange"] = ex_id
+                    jwrite("market/config.json", mc)
+                    return True, "OKX demo connected (" + ("Europe" if ex_id == "myokx" else "global") + "): " + \
+                        (", ".join(f"{v:,.2f} {c}" for c, v in cash.items()) or "no cash yet")
+                except Exception as e:
+                    last = str(e)
+                    if "50119" in last:
+                        continue                       # key made on the other OKX server: try it
+                    break
+            if "50119" in last or "50111" in last or "50113" in last:
+                return False, "OKX doesn't recognise the key — check you copied all three exactly, and made it while in Demo trading."
+            if "50110" in last or "whitelist" in last.lower():
+                return False, "OKX blocked this PC's IP — edit the key on OKX and remove the IP restriction."
+            if "instruments" in last or "timed out" in last.lower() or "connection" in last.lower():
+                return False, "Can't reach OKX from this PC right now — check the internet and try again."
+            return False, "OKX said: " + last[-160:]
+    except urllib.error.HTTPError as e:
+        if what == "jupiter" and e.code in (401, 403):
+            return False, "Jupiter rejected the key — copy it again from portal.jup.ag (Server key)."
+        return False, f"{what}: server answered {e.code}"
+    except Exception as e:
+        return False, f"{what}: no connection ({type(e).__name__}) — check the internet"
+    return False, "unknown check"
 
 
 def write_env(updates):
@@ -612,6 +687,9 @@ class H(BaseHTTPRequestHandler):
             return self._send(403, {"error": "forbidden"})
         u = urlparse(self.path)
         b = self._body()
+        if u.path == "/api/test":
+            ok, msg = test_connection(b.get("what", ""))
+            return self._send(200, {"ok": ok, "msg": msg})
         if u.path == "/api/okx_budget":
             try:
                 amt = float(b.get("amount"))

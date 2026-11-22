@@ -40,6 +40,7 @@ td.why{font-family:var(--font);color:var(--muted);white-space:normal}
 .pill{font:700 11px var(--mono);padding:3px 9px;border-radius:99px}
 .p-trade{background:#123b2c;color:var(--up)} .p-prob{background:#3a2c10;color:var(--warn)} .p-shadow{background:#2a2f4d;color:var(--muted)}
 .btn{font:600 14px var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:10px;padding:10px 16px;cursor:pointer}
+a.btn{text-decoration:none;display:inline-block}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn.go{background:#1f8f63;border-color:#1f8f63;color:#fff}
 .btn.danger{background:#7a2433;border-color:#a8344a;color:#fff}
@@ -74,6 +75,7 @@ a{color:var(--accent2)}
 <nav aria-label="Menu">
   <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 20 20"><path d="M2 15 L7 9 L11 12 L18 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>HatCryptoBot</b></div>
   <button data-page="dash" aria-current="page"><span class="dot"></span>Dashboard</button>
+  <button data-page="connect"><span class="dot"></span>Connect</button>
   <button data-page="okx"><span class="dot"></span>OKX demo</button>
   <button data-page="control"><span class="dot"></span>Start / Stop</button>
   <button data-page="strats"><span class="dot"></span>Strategies</button>
@@ -146,6 +148,32 @@ a{color:var(--accent2)}
   </section>
 
   <!-- OKX DEMO -->
+  <section id="connect" hidden>
+    <h1>Connect</h1><p class="sub">Three easy steps per platform. Press <b>Test</b> — green ✓ means it works. Your keys stay on this PC only.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+      <div class="card"><h2>1 · Bot wallet (meme coins on Solana)</h2>
+        <ol class="s"><li>Press <b>Create bot wallet</b> (once).</li><li>Press <b>Copy address</b> and send SOL to it (Jupiter app → Buy, or Fomo → Withdraw → SOL).</li><li>Press <b>Test</b>.</li></ol>
+        <div class="row"><button class="btn" id="cNewWal">Create bot wallet</button><button class="btn" id="cCopy">Copy address</button><button class="btn primary" data-test="wallet">Test</button></div>
+        <p class="s" id="t_wallet" style="margin:8px 0 0">—</p></div>
+      <div class="card"><h2>2 · Jupiter key (free, needed for real trades)</h2>
+        <ol class="s"><li>Press <b>Get free key</b> → sign up → Create API key → <b>Server key</b>.</li><li>Copy it and paste here.</li><li>Press <b>Save &amp; test</b>.</li></ol>
+        <div class="row"><a class="btn" href="https://portal.jup.ag" target="_blank" rel="noopener">Get free key</a></div>
+        <div class="row" style="margin-top:8px"><input id="cJup" type="password" placeholder="paste Jupiter key"><button class="btn primary" data-save="jupiter">Save &amp; test</button></div>
+        <p class="s" id="t_jupiter" style="margin:8px 0 0">—</p></div>
+      <div class="card"><h2>3 · OKX (regular coins, demo)</h2>
+        <ol class="s"><li>Press <b>Open OKX</b> → switch to <b>Demo trading</b> → <b>Create API key</b> (permission: Trade, no IP limit).</li><li>Paste the API key, Secret key and your passphrase.</li><li>Press <b>Save &amp; test</b> — Europe or global is found automatically.</li></ol>
+        <div class="row"><a class="btn" href="https://my.okx.com/account/my-api" target="_blank" rel="noopener">Open OKX (Europe)</a><a class="btn" href="https://www.okx.com/account/my-api" target="_blank" rel="noopener">Open OKX (global)</a></div>
+        <div class="form" style="margin-top:8px"><input id="cOk1" type="password" placeholder="API key"><input id="cOk2" type="password" placeholder="Secret key"><input id="cOk3" type="password" placeholder="Passphrase"></div>
+        <div class="row" style="margin-top:8px"><button class="btn primary" data-save="okx">Save &amp; test</button></div>
+        <p class="s" id="t_okx" style="margin:8px 0 0">—</p></div>
+      <div class="card"><h2>Optional · Fast server (Helius, free)</h2>
+        <ol class="s"><li>Press <b>Get free server</b> → sign up → copy your <b>RPC URL</b>.</li><li>Paste it here.</li><li>Press <b>Save &amp; test</b>. Makes real trades faster and turns on smart-money tracking.</li></ol>
+        <div class="row"><a class="btn" href="https://www.helius.dev" target="_blank" rel="noopener">Get free server</a></div>
+        <div class="row" style="margin-top:8px"><input id="cRpc" type="password" placeholder="https://mainnet.helius-rpc.com/?api-key=…"><button class="btn primary" data-save="rpc">Save &amp; test</button></div>
+        <p class="s" id="t_rpc" style="margin:8px 0 0">—</p></div>
+    </div>
+  </section>
+
   <section id="okx" hidden>
     <h1>OKX demo</h1><p class="sub" id="okxSub">Regular coins on your OKX Demo Trading account.</p>
     <div class="grid cards">
@@ -260,7 +288,7 @@ async function api(path,body){const r=await fetch(path,body?{method:"POST",heade
 document.querySelectorAll("nav button[data-page]").forEach(b=>b.onclick=()=>show(b.dataset.page));
 function show(p){document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==p);
   document.querySelectorAll("nav button[data-page]").forEach(b=>b.setAttribute("aria-current",b.dataset.page===p?"page":"false"));
-  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="okx"&&S)drawOkx(); if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
+  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="okx"&&S)drawOkx(); if(p==="connect")["wallet","jupiter","okx","rpc"].forEach(runTest); if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
 
 const LABELS={scalp:"Scalp (quick +6%)",momentum:"Momentum",dip:"Dip buy",breakout:"Breakout",rocket:"Rocket",
   maj_momentum:"Regular: momentum",maj_dip:"Regular: dip",maj_breakout:"Regular: breakout",hype:"VIP post (Elon/Trump)",predict:"Prediction model"};
@@ -314,6 +342,14 @@ function drawOkx(){const o=S.okx||{},q=o.quote||"USDC",st=o.start;
   $("oxBlocked").textContent=(o.blocked||[]).join(", ")||"none so far";
   lineChart("oxChart",(o.history||[]).map(p=>p[1]),st||((o.history||[])[0]||[0,0])[1])}
 $("oxBudgetSet").onclick=async()=>{const r=await api("/api/okx_budget",{amount:$("oxBudget").value});toast(r.msg);refresh()};
+async function runTest(w){const el=$("t_"+w);el.textContent="testing…";el.className="s";try{const r=await api("/api/test",{what:w});el.textContent=(r.ok===null?"– ":r.ok?"✓ ":"✗ ")+r.msg;el.className="s "+(r.ok===null?"":r.ok?"up":"down")}catch(e){el.textContent="✗ app not responding";el.className="s down"}}
+document.querySelectorAll("[data-test]").forEach(b=>b.onclick=()=>runTest(b.dataset.test));
+document.querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{const w=b.dataset.save,body={};
+  if(w==="jupiter")body.jupiter=$("cJup").value.trim();if(w==="rpc")body.rpc=$("cRpc").value.trim();
+  if(w==="okx"){body.okx_key=$("cOk1").value.trim();body.okx_secret=$("cOk2").value.trim();body.okx_pass=$("cOk3").value.trim()}
+  if(!Object.values(body).some(v=>v)){runTest(w);return}
+  const r=await api("/api/keys",body);if(r.ok===false){toast(r.msg);return}["cJup","cRpc","cOk1","cOk2","cOk3"].forEach(i=>$(i).value="");runTest(w);refresh()});
+$("cNewWal").onclick=()=>$("newWal").click();$("cCopy").onclick=()=>$("copyAddr").click();
 $("oxLog").onclick=()=>{show("log");$("logWhich").value="okx";loadLog()};
 function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
   const h=(S.equity_history||[]).map(p=>p[1]);x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
