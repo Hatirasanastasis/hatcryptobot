@@ -4,56 +4,63 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>HatCryptoBot</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
 :root{
-  --bg:#0b0e1a; --panel:#131830; --sunk:#0f1327; --line:#232a4a; --fg:#e8ebf8; --muted:#8e96bd;
-  --accent:#7c6cff; --accent2:#22c3d6; --up:#35d39a; --down:#ff6b7a; --warn:#f2b04a;
-  --font:"Segoe UI",system-ui,-apple-system,sans-serif; --mono:Consolas,"Cascadia Mono",ui-monospace,monospace;
+  --bg:#0d0c0b; --panel:#151311; --sunk:#100f0d; --line:#2a2622; --fg:#efe8dc; --muted:#a79e91;
+  --accent:#c9a15a; --accent2:#e3c48a; --up:#7fc29b; --down:#d98b7a; --warn:#e0b46a;
+  --font:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",Consolas,"Cascadia Mono",ui-monospace,monospace;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif; color-scheme:dark;
 }
 *{box-sizing:border-box} html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--font);display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-nav{background:linear-gradient(180deg,#151a38,#0f1329);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px}
+nav{background:#110f0d;border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:4px}
 .brand{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
-.brand b{font-size:20px;letter-spacing:-.02em}
-.mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center}
-nav button{all:unset;cursor:pointer;padding:9px 12px;border-radius:9px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:10px}
-nav button:hover{background:#1b2146;color:var(--fg)}
-nav button[aria-current="page"]{background:#232a5c;color:var(--fg)}
-nav .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.brand b{font:600 21px var(--display);letter-spacing:.01em}
+.mark{width:30px;height:30px;border-radius:2px;border:1px solid var(--accent);background:transparent;display:grid;place-items:center;color:var(--accent)}
+nav button{all:unset;cursor:pointer;padding:9px 12px;border-radius:2px;border-left:2px solid transparent;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:10px}
+nav button:hover{background:#1a1714;color:var(--fg)}
+nav button[aria-current="page"]{background:#1d1915;color:var(--fg);border-left-color:var(--accent)}
+nav .dot{width:5px;height:5px;border-radius:0;transform:rotate(45deg);background:var(--line)}
+nav button[aria-current="page"] .dot{background:var(--accent)}
 nav .grow{flex:1}
-.runstate{padding:10px 12px;border-radius:10px;background:var(--sunk);border:1px solid var(--line);font-size:12px;color:var(--muted)}
-main{padding:22px 26px;overflow:auto}
-h1{font-size:22px;margin:0 0 4px} h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:0 0 10px}
+.runstate{padding:10px 12px;border-radius:2px;background:var(--sunk);border:1px solid var(--line);font-size:12px;color:var(--muted)}
+main{padding:28px 34px;overflow:auto}
+h1{font:400 34px/1.1 var(--display);margin:0 0 6px;letter-spacing:-.005em} h2{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin:0 0 12px}
 .sub{color:var(--muted);margin:0 0 18px}
 .grid{display:grid;gap:14px}
 .cards{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
-.k{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
-.v{font:600 24px var(--mono);margin-top:4px}
+.card{background:linear-gradient(170deg,#181512,#121110);border:1px solid var(--line);border-radius:2px;padding:18px 20px}
+.k{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.16em;color:var(--muted)}
+.v{font:400 30px/1.15 var(--display);margin-top:6px;font-variant-numeric:lining-nums tabular-nums}
 .s{font-size:12px;color:var(--muted)}
 .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:8px;border-bottom:1px solid var(--line)}
 td{padding:8px;border-bottom:1px solid var(--line);font-family:var(--mono)}
 td.why{font-family:var(--font);color:var(--muted);white-space:normal}
-.tag{font:600 11px var(--mono);padding:2px 7px;border-radius:5px;background:#232a5c;color:#b9b2ff}
+.tag{font:500 10.5px var(--mono);padding:2px 7px;border-radius:2px;border:1px solid #4a3d26;background:transparent;color:var(--accent2);letter-spacing:.04em}
 .pill{font:700 11px var(--mono);padding:3px 9px;border-radius:99px}
-.p-trade{background:#123b2c;color:var(--up)} .p-prob{background:#3a2c10;color:var(--warn)} .p-shadow{background:#2a2f4d;color:var(--muted)}
-.btn{font:600 14px var(--font);border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:10px;padding:10px 16px;cursor:pointer}
+.p-trade{background:#14261c;color:var(--up)} .p-prob{background:#2b2114;color:var(--warn)} .p-shadow{background:#1c1a17;color:var(--muted)}
+.btn{font:600 13.5px var(--font);border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:2px;padding:10px 18px;cursor:pointer;letter-spacing:.02em}
+.btn:hover{border-color:var(--accent)}
 a.btn{text-decoration:none;display:inline-block}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.go{background:#1f8f63;border-color:#1f8f63;color:#fff}
-.btn.danger{background:#7a2433;border-color:#a8344a;color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#14110d}
+.btn.primary:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.go{background:#1e3a2a;border-color:#3f7a58;color:#cfead9}
+.btn.go:hover{border-color:var(--up)}
+.btn.danger{background:#3a1d18;border-color:#8a4a3e;color:#f1cfc6}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 label{display:grid;gap:5px;font-size:12px;color:var(--muted)}
-input,select,textarea{font:14px var(--mono);background:var(--sunk);border:1px solid var(--line);color:var(--fg);border-radius:9px;padding:9px 11px;width:100%}
+input,select,textarea{font:14px var(--mono);background:var(--sunk);border:1px solid var(--line);color:var(--fg);border-radius:2px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus,.btn:focus-visible,nav button:focus-visible{outline:1px solid var(--accent);outline-offset:1px}
 .form{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
 .help{font-size:12px;color:var(--muted)}
-.log{background:#070914;border:1px solid var(--line);border-radius:12px;padding:12px;font:12px/1.5 var(--mono);height:62vh;overflow:auto;white-space:pre-wrap}
-.toast{position:fixed;right:20px;bottom:20px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;max-width:420px;box-shadow:0 10px 30px #0008}
+.log{background:#0a0908;border:1px solid var(--line);border-radius:2px;padding:12px;font:12px/1.5 var(--mono);height:62vh;overflow:auto;white-space:pre-wrap}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--panel);border:1px solid var(--accent);border-radius:2px;padding:12px 16px;max-width:420px;box-shadow:0 10px 30px #0008}
 canvas{width:100%;height:220px;display:block}
-.notice{background:#2a1f10;border:1px solid #5a4012;border-radius:12px;padding:12px 14px;color:#f6d9a6}
+.notice{background:#1c160d;border:1px solid #4a3d26;border-radius:2px;padding:12px 14px;color:#f6d9a6}
 section[hidden]{display:none}
 @media (max-width:760px){
   body{grid-template-columns:1fr;font-size:15px}
@@ -69,11 +76,13 @@ section[hidden]{display:none}
   .toast{left:16px;right:16px;max-width:none}
 }
 a{color:var(--accent2)}
+.sub{font-size:14px}
+td{border-bottom-color:#211e1a}
 </style>
 </head>
 <body>
 <nav aria-label="Menu">
-  <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 20 20"><path d="M2 15 L7 9 L11 12 L18 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>HatCryptoBot</b></div>
+  <div class="brand"><span class="mark"><svg width="16" height="16" viewBox="0 0 20 20"><path d="M2 15 L7 9 L11 12 L18 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>HatCryptoBot</b></div>
   <button data-page="dash" aria-current="page"><span class="dot"></span>Dashboard</button>
   <button data-page="connect"><span class="dot"></span>Connect</button>
   <button data-page="okx"><span class="dot"></span>OKX demo</button>
@@ -332,12 +341,12 @@ async function refresh(){
   drawChart(); try{drawOkx()}catch(e){}
 }
 function lineChart(id,h,base){const c=$(id);if(!c||c.offsetParent===null)return;const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
-  x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
+  x.clearRect(0,0,r.width,r.height);x.fillStyle="#a79e91";x.font="12px Segoe UI";
   if(h.length<2){x.fillText("The chart fills in as the bot runs.",10,r.height/2);return}
   let lo=Math.min(...h,base),hi=Math.max(...h,base);const pad=(hi-lo)*.1||.01;lo-=pad;hi+=pad;
   const X=i=>8+(r.width-60)*i/(h.length-1),Y=v=>8+(r.height-16)*(1-(v-lo)/(hi-lo));
-  x.strokeStyle="#232a4a";x.setLineDash([4,4]);x.beginPath();x.moveTo(8,Y(base));x.lineTo(r.width-52,Y(base));x.stroke();x.setLineDash([]);
-  x.strokeStyle=h[h.length-1]>=base?"#35d39a":"#ff6b7a";x.lineWidth=2;x.beginPath();h.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
+  x.strokeStyle="#2a2622";x.setLineDash([4,4]);x.beginPath();x.moveTo(8,Y(base));x.lineTo(r.width-52,Y(base));x.stroke();x.setLineDash([]);
+  x.strokeStyle=h[h.length-1]>=base?"#7fc29b":"#d98b7a";x.lineWidth=2;x.beginPath();h.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
   x.fillText(hi.toFixed(2),r.width-48,14);x.fillText(lo.toFixed(2),r.width-48,r.height-4)}
 function drawOkx(){const o=S.okx||{},q=o.quote||"USDC",st=o.start;
   $("oxBal").textContent=o.equity!=null?o.equity.toFixed(2)+" "+q:"—";$("oxStart").textContent=st?`started at ${st.toFixed(2)} ${q}`:(S.running.okx?"connecting…":"not started");
@@ -369,12 +378,12 @@ $("xSave").onclick=async()=>{const el=$("t_ex");el.textContent="connecting…";e
 $("cNewWal").onclick=()=>$("newWal").click();$("cCopy").onclick=()=>$("copyAddr").click();
 $("oxLog").onclick=()=>{show("log");$("logWhich").value="okx";loadLog()};
 function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
-  const h=(S.equity_history||[]).map(p=>p[1]);x.clearRect(0,0,r.width,r.height);x.fillStyle="#8e96bd";x.font="12px Segoe UI";
+  const h=(S.equity_history||[]).map(p=>p[1]);x.clearRect(0,0,r.width,r.height);x.fillStyle="#a79e91";x.font="12px Segoe UI";
   if(h.length<2){x.fillText("The chart fills in as the bot runs.",10,r.height/2);return}
   let lo=Math.min(...h,S.start_sol),hi=Math.max(...h,S.start_sol);const pad=(hi-lo)*.1||.01;lo-=pad;hi+=pad;
   const X=i=>8+(r.width-60)*i/(h.length-1),Y=v=>8+(r.height-16)*(1-(v-lo)/(hi-lo));
-  x.strokeStyle="#232a4a";x.setLineDash([4,4]);x.beginPath();x.moveTo(8,Y(S.start_sol));x.lineTo(r.width-52,Y(S.start_sol));x.stroke();x.setLineDash([]);
-  const col=h[h.length-1]>=S.start_sol?"#35d39a":"#ff6b7a";x.strokeStyle=col;x.lineWidth=2;x.beginPath();h.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
+  x.strokeStyle="#2a2622";x.setLineDash([4,4]);x.beginPath();x.moveTo(8,Y(S.start_sol));x.lineTo(r.width-52,Y(S.start_sol));x.stroke();x.setLineDash([]);
+  const col=h[h.length-1]>=S.start_sol?"#7fc29b":"#d98b7a";x.strokeStyle=col;x.lineWidth=2;x.beginPath();h.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
   x.fillText(hi.toFixed(3),r.width-48,14);x.fillText(lo.toFixed(3),r.width-48,r.height-4)}
 
 // control
