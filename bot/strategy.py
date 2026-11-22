@@ -176,7 +176,7 @@ DEFAULTS = {
             "max_position_pct": 10,
         },
         "runner_new": {"light_safety": True, "enabled": False, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 30, "take_profit_sell_pct": 100, "trail_activate_pct": 15, "trailing_stop_pct": 10, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 60, "stale_min_gain_pct": 1000, "max_position_pct": 8, "vol_stop": False, "base": {"min_mcap_usd": 30000, "max_mcap_usd": 100000, "min_age_minutes": 5, "max_age_hours": 1, "min_liq_mcap_ratio": 0.5}},
-        "runner": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 30, "take_profit_sell_pct": 100, "trail_activate_pct": 15, "trailing_stop_pct": 10, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 60, "stale_min_gain_pct": 1000, "max_position_pct": 12, "vol_stop": False},
+        "runner": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 20, "take_profit_sell_pct": 100, "trail_activate_pct": 1000, "trailing_stop_pct": 1000, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 30, "stale_min_gain_pct": 1000, "max_position_pct": 12, "vol_stop": False},
         "smart": {
             # bought when 2+ proven early-buyer wallets (smart money) bought the same coin in the last 20 min
             "enabled": True, "min_liquidity_usd": 30000, "max_m5_pct": 20, "max_h1_pct": 300,
@@ -292,6 +292,8 @@ def base_ok(cfg, f):
         return False, f"market cap ${f['mcap']:,.0f} out of range"
     if f["age_min"] is None or not (b["min_age_minutes"] <= f["age_min"] <= b["max_age_hours"] * 60):
         return False, f"age {f['age_min'] or 0:.0f} min out of range"
+    if f["mcap"] and f["vol_h1"] / f["mcap"] > b.get("max_vol_mcap_h1", 5):
+        return False, f"1h volume {f['vol_h1'] / f['mcap']:.0f}x its market cap (wash trading)"
     if f["mcap"] and f["liq"] / f["mcap"] < b["min_liq_mcap_ratio"]:
         return False, f"pool thin vs market cap ({f['liq'] / f['mcap']:.1%})"
     return True, ""

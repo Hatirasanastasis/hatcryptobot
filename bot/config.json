@@ -23,7 +23,8 @@
     "max_mcap_usd": 50000000,
     "min_age_minutes": 20,
     "max_age_hours": 168,
-    "min_liq_mcap_ratio": 0.04
+    "min_liq_mcap_ratio": 0.04,
+    "max_vol_mcap_h1": 5
   },
   "require_revoked_authorities": true,
   "max_rugcheck_score": 1000,
@@ -143,14 +144,14 @@
       "confirm_max_run_pct": 100,
       "confirm_min_run_pct": -100,
       "stop_loss_pct": 12,
-      "take_profit_pct": 30,
+      "take_profit_pct": 20,
       "take_profit_sell_pct": 100,
-      "trail_activate_pct": 15,
-      "trailing_stop_pct": 10,
+      "trail_activate_pct": 1000,
+      "trailing_stop_pct": 1000,
       "breakeven_trigger_pct": 1000,
       "breakeven_lock_pct": 0,
       "profit_lock_keep_pct": 0,
-      "stale_minutes": 60,
+      "stale_minutes": 30,
       "stale_min_gain_pct": 1000,
       "max_position_pct": 12,
       "vol_stop": false

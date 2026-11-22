@@ -230,5 +230,29 @@
   "file": "config.json",
   "path": "strategies.runner_new.enabled",
   "value": false
+ },
+ {
+  "id": "runner-exits-revert-2026-11-22-take_profit_pct",
+  "file": "config.json",
+  "path": "strategies.runner.take_profit_pct",
+  "value": 20
+ },
+ {
+  "id": "runner-exits-revert-2026-11-22-trail_activate_pct",
+  "file": "config.json",
+  "path": "strategies.runner.trail_activate_pct",
+  "value": 1000
+ },
+ {
+  "id": "runner-exits-revert-2026-11-22-trailing_stop_pct",
+  "file": "config.json",
+  "path": "strategies.runner.trailing_stop_pct",
+  "value": 1000
+ },
+ {
+  "id": "runner-exits-revert-2026-11-22-stale_minutes",
+  "file": "config.json",
+  "path": "strategies.runner.stale_minutes",
+  "value": 30
  }
 ]
