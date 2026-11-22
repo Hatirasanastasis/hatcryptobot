@@ -296,5 +296,47 @@
   "file": "config.json",
   "path": "strategies.breakout.breakeven_trigger_pct",
   "value": 10
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-take_profit_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.take_profit_pct",
+  "value": 20
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-take_profit_sell_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.take_profit_sell_pct",
+  "value": 50
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-trail_activate_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.trail_activate_pct",
+  "value": 6
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-trailing_stop_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.trailing_stop_pct",
+  "value": 8
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-profit_lock_keep_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.profit_lock_keep_pct",
+  "value": 50
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-stale_minutes",
+  "file": "config.json",
+  "path": "strategies.breakout.stale_minutes",
+  "value": 30
+ },
+ {
+  "id": "breakout-revert-winrate-2026-11-22-breakeven_trigger_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.breakeven_trigger_pct",
+  "value": 10
  }
 ]
