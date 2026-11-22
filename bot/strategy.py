@@ -175,6 +175,7 @@ DEFAULTS = {
             "stale_minutes": 30, "stale_min_gain_pct": 5,
             "max_position_pct": 10,
         },
+        "runner_new": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 30, "take_profit_sell_pct": 100, "trail_activate_pct": 15, "trailing_stop_pct": 10, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 60, "stale_min_gain_pct": 1000, "max_position_pct": 8, "vol_stop": False, "base": {"min_mcap_usd": 30000, "max_mcap_usd": 100000, "min_age_minutes": 5, "max_age_hours": 1, "min_liq_mcap_ratio": 0.5}},
         "runner": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 30, "take_profit_sell_pct": 100, "trail_activate_pct": 15, "trailing_stop_pct": 10, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 60, "stale_min_gain_pct": 1000, "max_position_pct": 12, "vol_stop": False},
         "smart": {
             # bought when 2+ proven early-buyer wallets (smart money) bought the same coin in the last 20 min
@@ -332,11 +333,18 @@ def entry_step(cfg, pair, w, now_s, allowed, base=None, priority=None):
     (used for regular coins). Returns (action, strategy, reason, new_watch): BUY / WATCH / WAIT / DROP / NONE."""
     f = features(pair, now_s * 1000)
     ok, why = base_ok(dict(cfg, base=base) if base else cfg, f)
-    if not ok:
+    own = [n for n in (priority or cfg["strategy_priority"])
+           if not base and (cfg["strategies"].get(n) or {}).get("base") and n in allowed]
+    if not ok and not own:
         return "NONE", None, f"{f['sym']}: {why}", None
     for name in (priority or cfg["strategy_priority"]):
         s = cfg["strategies"].get(name)
         if not s or not s.get("enabled") or name not in allowed:
+            continue
+        if s.get("base") and not base:          # this strategy has its own coin filters (e.g. fresh small coins)
+            if not base_ok(dict(cfg, base={**cfg["base"], **s["base"]}), f)[0]:
+                continue
+        elif not ok:
             continue
         if not signal(name, s, f):
             continue

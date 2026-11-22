@@ -26,7 +26,7 @@ import strategy as S
 
 HERE = Path(__file__).resolve().parent
 EDGE_PATH = HERE / "data" / "edge.json"
-RULES = ["runner", "scalp", "momentum", "dip", "breakout", "rocket", "maj_momentum", "maj_dip", "maj_breakout"]
+RULES = ["runner", "runner_new", "scalp", "momentum", "dip", "breakout", "rocket", "maj_momentum", "maj_dip", "maj_breakout"]
 
 
 def _as_pair(r):
@@ -101,13 +101,17 @@ def measure(cfg, ticks, cost_pct=1.0, check_safety=True):
         is_major = m in maj_mints
         for i, (t, r) in enumerate(rows):
             f = S.features(_as_pair(r), t * 1000)
-            if not S.base_ok(maj_cfg if is_major else cfg, f)[0]:
-                continue
+            ok_base = S.base_ok(maj_cfg if is_major else cfg, f)[0]
             for n in RULES:
                 if n.startswith("maj_") != is_major:          # regular-coin rules only on regular coins, and vice versa
                     continue
                 s = cfg["strategies"].get(n)
                 if not s or not s.get("enabled", True):
+                    continue
+                if s.get("base") and not is_major:
+                    if not S.base_ok(dict(cfg, base={**cfg["base"], **s["base"]}), f)[0]:
+                        continue
+                elif not ok_base:
                     continue
                 if t_end - t < s["stale_minutes"] * 60:          # outcome not known yet
                     continue
