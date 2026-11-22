@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.12.0"
+APP_VERSION = "1.13.0"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -301,6 +301,75 @@ def test_connection(what):
     except Exception as e:
         return False, f"{what}: no connection ({type(e).__name__}) — check the internet"
     return False, "unknown check"
+
+
+EXCHANGES = [("binance", "Binance"), ("bybit", "Bybit"), ("myokx", "OKX (Europe)"), ("okx", "OKX (global)"),
+             ("kraken", "Kraken"), ("coinbase", "Coinbase Advanced"), ("bitget", "Bitget"), ("kucoin", "KuCoin"),
+             ("gate", "Gate.io"), ("mexc", "MEXC"), ("bitvavo", "Bitvavo"), ("cryptocom", "Crypto.com"), ("htx", "HTX")]
+
+
+def exchange_list():
+    import ccxt
+    out = []
+    for i, name in EXCHANGES:
+        if i not in ccxt.exchanges:
+            continue
+        ex = getattr(ccxt, i)()
+        out.append({"id": i, "name": name, "pass": bool(ex.requiredCredentials.get("password")),
+                    "demo": bool((ex.urls or {}).get("test"))})
+    return out
+
+
+def exchange_connect(b):
+    """Save one exchange connection for the regular-coins bot and test it live."""
+    import ccxt
+    ex_id, mode = b.get("exchange"), b.get("mode", "paper")
+    if ex_id not in dict(EXCHANGES) or mode not in ("paper", "demo", "live"):
+        return False, "pick an exchange and a mode"
+    pre = {"demo": "DEMO_", "live": ""}.get(mode)
+    if pre is not None and (b.get("key") or b.get("secret")):
+        write_env({pre + "API_KEY": (b.get("key") or "").strip(), pre + "API_SECRET": (b.get("secret") or "").strip(),
+                   pre + "API_PASSWORD": (b.get("pass") or "").strip()})
+    env = read_env()
+    mc = jread("market/config.json", {}) or {}
+    mc.update(exchange=ex_id, mode=mode)
+    if mode == "live":
+        try:
+            mc["live_budget"] = float(b.get("budget") or mc.get("live_budget") or 0)
+        except ValueError:
+            return False, "budget must be a number"
+        if mc["live_budget"] <= 0:
+            return False, "set a budget: the most this bot may ever use of your real money"
+    jwrite("market/config.json", mc)
+    try:
+        params = {"enableRateLimit": True}
+        if pre is not None:
+            params.update(apiKey=env.get(pre + "API_KEY"), secret=env.get(pre + "API_SECRET"))
+            if env.get(pre + "API_PASSWORD"):
+                params["password"] = env.get(pre + "API_PASSWORD")
+            if not (params.get("apiKey") and params.get("secret")):
+                return False, "paste the API key and secret"
+        ex = getattr(ccxt, ex_id)(params)
+        if mode == "demo":
+            if not (ex.urls or {}).get("test"):
+                return False, f"{dict(EXCHANGES)[ex_id]} has no demo account here — choose Paper (real prices, fake money)"
+            ex.set_sandbox_mode(True)
+        if mode == "paper":
+            ex.load_markets()
+            return True, f"Paper mode on {dict(EXCHANGES)[ex_id]}: real prices, fake money ({len(ex.markets)} markets)"
+        free = ex.fetch_balance().get("free") or {}
+        cash = {c: float(free.get(c) or 0) for c in ("USDT", "USDC", "EUR", "USD") if float(free.get(c) or 0) > 0}
+        what = "DEMO" if mode == "demo" else "REAL MONEY"
+        return True, f"{dict(EXCHANGES)[ex_id]} {what} connected: " + (", ".join(f"{v:,.2f} {c}" for c, v in cash.items())
+                                                                      or "no USDT/USDC/EUR yet — deposit to trade")
+    except ccxt.AuthenticationError as e:
+        return False, "the exchange rejected the key — copy key, secret (and passphrase) again. (" + str(e)[-80:] + ")"
+    except ccxt.PermissionDenied as e:
+        return False, "the key has no trading permission or the IP is restricted — fix it on the exchange. (" + str(e)[-80:] + ")"
+    except ccxt.NetworkError:
+        return False, "can't reach the exchange from this PC — check the internet (or it is not available in your country)"
+    except Exception as e:
+        return False, str(e)[-160:]
 
 
 def write_env(updates):
@@ -647,6 +716,10 @@ class H(BaseHTTPRequestHandler):
                 else APP_DIR / "ui.html"
             self.wfile.write(ui.read_bytes())
             return
+        if u.path == "/api/exchanges":
+            mc = jread("market/config.json", {}) or {}
+            return self._send(200, {"list": exchange_list(), "exchange": mc.get("exchange"), "mode": mc.get("mode"),
+                                    "budget": mc.get("live_budget")})
         if u.path == "/api/version":
             return self._send(200, {"app": APP_VERSION, "bot": installed_version(), **UPDATE_STATUS})
         if u.path == "/api/phone":
@@ -687,6 +760,11 @@ class H(BaseHTTPRequestHandler):
             return self._send(403, {"error": "forbidden"})
         u = urlparse(self.path)
         b = self._body()
+        if u.path == "/api/exchange_connect":
+            if not self._local():
+                return self._send(403, {"ok": False, "msg": "connect exchanges on the PC"})
+            ok, msg = exchange_connect(b)
+            return self._send(200, {"ok": ok, "msg": msg})
         if u.path == "/api/test":
             ok, msg = test_connection(b.get("what", ""))
             return self._send(200, {"ok": ok, "msg": msg})
@@ -750,14 +828,21 @@ class H(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": r.returncode == 0, "lines": lines})
             if u.path == "/api/start" and b.get("name") == "okx":
                 env = read_env()
-                if not (env.get("DEMO_API_KEY") and env.get("DEMO_API_SECRET") and env.get("DEMO_API_PASSWORD")):
-                    return self._send(400, {"ok": False, "msg": "add your OKX demo API key, secret and passphrase in Wallet & keys first"})
-                mc = jread("market/config.json", {})
-                mc["mode"] = "demo"
+                mc = jread("market/config.json", {}) or {}
+                mode = mc.get("mode", "demo")
+                pre = {"demo": "DEMO_", "live": ""}.get(mode)
+                if pre is not None and not (env.get(pre + "API_KEY") and env.get(pre + "API_SECRET")):
+                    return self._send(400, {"ok": False, "msg": "connect an exchange first (Connect → Any exchange)"})
+                if mode == "live":
+                    if b.get("confirm") != "YES":
+                        return self._send(400, {"ok": False, "need_confirm": True,
+                                                "msg": f"REAL MONEY on {mc.get('exchange')} — up to {mc.get('live_budget')} — type YES"})
+                    if not mc.get("live_budget"):
+                        return self._send(400, {"ok": False, "msg": "set a budget first (Connect → Any exchange)"})
                 mc["ntfy_topic"] = (jread("config.json", {}) or {}).get("ntfy_topic", "")
                 jwrite("market/config.json", mc)
-                ok, msg = start("okx")
-                return self._send(200, {"ok": ok, "msg": msg if ok else "OKX: " + msg})
+                ok, msg = start("okx", live=(mode == "live"))
+                return self._send(200, {"ok": ok, "msg": (f"{mc.get('exchange')} {mode}: " + msg)})
             if u.path == "/api/start":
                 name = b.get("name", "bot")
                 live = b.get("live", False)

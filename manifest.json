@@ -1,5 +1,5 @@
 {
- "version": "1.12.0",
+ "version": "1.13.0",
  "files": {
   "bot/.env.example": "d627ccce2b4b67934a4fcca8b9ae03b0f8ee45a0de7f75e85eab22b1e72dcd95",
   "bot/GO_LIVE.md": "de661ca7a79ee277860dfe5495a11d697fd4b864cd720c0f4e7e77b466b82001",
@@ -25,7 +25,7 @@
   "bot/strategy.py": "d7b20d2c79814a2a9a409e645aa040fbab9e51a44b24b62a1bd9e498ba454123",
   "bot/stream.py": "86d4ab6de0f2fef5ec9f5732fbcf98f3b77d0e934dc89eae8342b2e3f8d98757",
   "bot/wallets.json": "dd079e8f94ee041def1561098d89936200b8a631e7bcbe1d0bd943a3fad38e3d",
-  "ui.html": "7384ccf83e576ddb808497f746d08241194ec43546f84e979deb35eccd6d23e6",
-  "app/hatcryptobot.py": "3fe1ff1ae58522f2cd56bb1ae78d646de40aa067711e2f4bb685eee418b1bd22"
+  "ui.html": "520139dad6fac037d19209f8f4bc748aed1173a6468309261013ec3cd8981664",
+  "app/hatcryptobot.py": "88d4e4333cfa575b5e7357271faa23b5b5d2ac6ef8799a54bf89448072e4bb50"
  }
 }

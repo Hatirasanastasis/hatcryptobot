@@ -123,7 +123,7 @@ a{color:var(--accent2)}
       <div class="card"><h2>Copy-trader</h2><p class="s" id="copyState">—</p>
         <div class="row"><button class="btn go" data-start="copy">Start demo</button><button class="btn danger" data-livestart="copy">Start LIVE</button><button class="btn" data-stop="copy">Stop</button></div></div>
       <div class="card"><h2>Regular coins — OKX demo</h2><p class="s" id="okxState">—</p>
-        <div class="row"><button class="btn go" data-start="okx">Start on OKX demo</button><button class="btn" data-stop="okx">Stop</button></div>
+        <div class="row"><button class="btn go" data-start="okx">Start regular-coins bot</button><button class="btn" data-stop="okx">Stop</button></div>
         <p class="help">Trades BTC, ETH and the top 50 coins on your OKX Demo Trading account. You see every trade in the OKX app.</p></div>
       <div class="card"><h2>Fresh demo</h2><p class="s">Stops the bot and restarts the demo with a new balance.</p>
         <div class="row"><input id="resetUsd" type="number" value="1000" min="10" style="max-width:140px"><button class="btn primary" id="resetBtn">Restart demo</button></div></div>
@@ -166,6 +166,14 @@ a{color:var(--accent2)}
         <div class="form" style="margin-top:8px"><input id="cOk1" type="password" placeholder="API key"><input id="cOk2" type="password" placeholder="Secret key"><input id="cOk3" type="password" placeholder="Passphrase"></div>
         <div class="row" style="margin-top:8px"><button class="btn primary" data-save="okx">Save &amp; test</button></div>
         <p class="s" id="t_okx" style="margin:8px 0 0">—</p></div>
+      <div class="card"><h2>4 · Any exchange (regular coins)</h2>
+        <ol class="s"><li>Pick your exchange and a mode: <b>Paper</b> (real prices, fake money, no keys), <b>Demo</b> (the exchange's practice account) or <b>Real money</b>.</li>
+          <li>On the exchange create an API key with <b>trade</b> permission only (never withdraw) and paste it.</li><li>Press <b>Save &amp; test</b>, then Start / Stop → <b>Start</b>.</li></ol>
+        <div class="form"><select id="xEx"></select><select id="xMode"><option value="paper">Paper — real prices, fake money</option><option value="demo">Demo account</option><option value="live">Real money</option></select></div>
+        <div class="form" style="margin-top:8px"><input id="xKey" type="password" placeholder="API key"><input id="xSec" type="password" placeholder="Secret key">
+          <input id="xPass" type="password" placeholder="Passphrase (if the exchange uses one)"><input id="xBudget" type="number" min="0" placeholder="Real-money budget (USDT/USDC)"></div>
+        <div class="row" style="margin-top:8px"><button class="btn primary" id="xSave">Save &amp; test</button></div>
+        <p class="s" id="t_ex" style="margin:8px 0 0">—</p></div>
       <div class="card"><h2>Optional · Fast server (Helius, free)</h2>
         <ol class="s"><li>Press <b>Get free server</b> → sign up → copy your <b>RPC URL</b>.</li><li>Paste it here.</li><li>Press <b>Save &amp; test</b>. Makes real trades faster and turns on smart-money tracking.</li></ol>
         <div class="row"><a class="btn" href="https://www.helius.dev" target="_blank" rel="noopener">Get free server</a></div>
@@ -182,7 +190,7 @@ a{color:var(--accent2)}
       <div class="card"><div class="k">Win rate</div><div class="v" id="oxWin">—</div><div class="s" id="oxWinS">—</div></div>
       <div class="card"><div class="k">Open coins</div><div class="v" id="oxOpen">0</div><div class="s" id="oxRun">—</div></div>
     </div>
-    <div class="row" style="margin:14px 0"><button class="btn go" data-start="okx">Start on OKX demo</button><button class="btn" data-stop="okx">Stop</button>
+    <div class="row" style="margin:14px 0"><button class="btn go" data-start="okx">Start regular-coins bot</button><button class="btn" data-stop="okx">Stop</button>
       <button class="btn" id="oxLog">Open its log</button></div>
     <div class="card" style="margin-bottom:14px"><h2>Budget</h2>
       <div class="row"><input id="oxBudget" type="number" min="10" step="100" style="max-width:180px"><button class="btn primary" id="oxBudgetSet">Set budget</button></div>
@@ -288,7 +296,7 @@ async function api(path,body){const r=await fetch(path,body?{method:"POST",heade
 document.querySelectorAll("nav button[data-page]").forEach(b=>b.onclick=()=>show(b.dataset.page));
 function show(p){document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==p);
   document.querySelectorAll("nav button[data-page]").forEach(b=>b.setAttribute("aria-current",b.dataset.page===p?"page":"false"));
-  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="okx"&&S)drawOkx(); if(p==="connect")["wallet","jupiter","okx","rpc"].forEach(runTest); if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
+  if(p==="log")loadLog(); if(p==="strats")loadBrain(); if(p==="help"){loadPhone();loadVer()} if(p==="okx"&&S)drawOkx(); if(p==="connect"){["wallet","jupiter","okx","rpc"].forEach(runTest);loadEx()} if(p==="copy")loadWallets(); if(p==="events")loadEvents(); if(p==="settings")fillSettings()}
 
 const LABELS={scalp:"Scalp (quick +6%)",momentum:"Momentum",dip:"Dip buy",breakout:"Breakout",rocket:"Rocket",
   maj_momentum:"Regular: momentum",maj_dip:"Regular: dip",maj_breakout:"Regular: breakout",hype:"VIP post (Elon/Trump)",predict:"Prediction model"};
@@ -349,6 +357,15 @@ document.querySelectorAll("[data-save]").forEach(b=>b.onclick=async()=>{const w=
   if(w==="okx"){body.okx_key=$("cOk1").value.trim();body.okx_secret=$("cOk2").value.trim();body.okx_pass=$("cOk3").value.trim()}
   if(!Object.values(body).some(v=>v)){runTest(w);return}
   const r=await api("/api/keys",body);if(r.ok===false){toast(r.msg);return}["cJup","cRpc","cOk1","cOk2","cOk3"].forEach(i=>$(i).value="");runTest(w);refresh()});
+let XL=[];async function loadEx(){try{const r=await api("/api/exchanges");XL=r.list||[];
+  $("xEx").innerHTML=XL.map(x=>`<option value="${x.id}">${esc(x.name)}${x.demo?"":" (no demo — use Paper)"}</option>`).join("");
+  if(r.exchange)$("xEx").value=r.exchange;if(r.mode)$("xMode").value=r.mode;if(r.budget)$("xBudget").value=r.budget;xForm()}catch(e){}}
+function xForm(){const x=XL.find(e=>e.id===$("xEx").value)||{},m=$("xMode").value;$("xPass").hidden=!x.pass||m==="paper";
+  $("xKey").hidden=$("xSec").hidden=m==="paper";$("xBudget").hidden=m!=="live"}
+$("xEx").onchange=xForm;$("xMode").onchange=xForm;
+$("xSave").onclick=async()=>{const el=$("t_ex");el.textContent="connecting…";el.className="s";
+  const r=await api("/api/exchange_connect",{exchange:$("xEx").value,mode:$("xMode").value,key:$("xKey").value,secret:$("xSec").value,pass:$("xPass").value,budget:$("xBudget").value});
+  el.textContent=(r.ok?"✓ ":"✗ ")+r.msg;el.className="s "+(r.ok?"up":"down");if(r.ok){["xKey","xSec","xPass"].forEach(i=>$(i).value="")};refresh()};
 $("cNewWal").onclick=()=>$("newWal").click();$("cCopy").onclick=()=>$("copyAddr").click();
 $("oxLog").onclick=()=>{show("log");$("logWhich").value="okx";loadLog()};
 function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=r.height*d;const x=c.getContext("2d");x.scale(d,d);
@@ -361,7 +378,9 @@ function drawChart(){const c=$("chart"),r=c.getBoundingClientRect(),d=devicePixe
   x.fillText(hi.toFixed(3),r.width-48,14);x.fillText(lo.toFixed(3),r.width-48,r.height-4)}
 
 // control
-document.querySelectorAll("[data-start]").forEach(b=>b.onclick=async()=>{const r=await api("/api/start",{name:b.dataset.start,live:false});toast(r.msg);refresh()});
+document.querySelectorAll("[data-start]").forEach(b=>b.onclick=async()=>{let r=await api("/api/start",{name:b.dataset.start,live:false});
+  if(r.need_confirm){const c=prompt(r.msg);if(c!=="YES"){toast("not started");return}r=await api("/api/start",{name:b.dataset.start,live:false,confirm:"YES"})}
+  toast(r.msg);refresh()});
 document.querySelectorAll("[data-stop]").forEach(b=>b.onclick=async()=>{const r=await api("/api/stop",{name:b.dataset.stop});toast(r.msg);refresh()});
 document.querySelectorAll("[data-livestart]").forEach(b=>b.onclick=()=>{pending=b.dataset.livestart;$("liveBox").hidden=false;$("liveYes").value="";$("liveYes").focus()});
 $("liveCancel").onclick=()=>{$("liveBox").hidden=true;pending=null};
