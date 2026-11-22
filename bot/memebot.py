@@ -1194,7 +1194,10 @@ class Bot:
                 conv_why.append(f"+AI hype {av['hype']}/10")
             if av:
                 why = f"{why} | AI: hype {av['hype']}, danger {av['danger']} — {av['reason']}"
-            mult *= conv * self.edge.size_mult(c, name)
+            em = self.edge.size_mult(c, name)
+            if em != 1.0:
+                conv_why.append(f"edge size {em:.2f}x")
+            mult *= conv * em
             sname = c["strategies"][name]
             stop_pct = S.vol_stop(c, sname, vol10)
             if stop_pct:

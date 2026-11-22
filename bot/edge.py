@@ -135,6 +135,7 @@ def measure(cfg, ticks, cost_pct=1.0, check_safety=True):
         rec = [x[2] for x in xs if x[0] >= half]
         stats[n] = {"n": len(rs), "coins": len({x[1] for x in xs}),
                     "avg": round(st.mean(rs), 2) if rs else None,
+                    "sd": round(st.pstdev(rs), 2) if len(rs) > 1 else None,
                     "recent": round(st.mean(rec), 2) if rec else None, "recent_n": len(rec),
                     "win": round(sum(1 for v in rs if v > 0) / len(rs), 2) if rs else None,
                     "examples": [(x[3], round(x[2], 1)) for x in xs[-5:]]}
@@ -216,7 +217,27 @@ class EdgeGate:
         if not cfg.get("edge_gate", True) or name not in RULES:
             return 1.0
         self.refresh()
-        return 0.5 if (self.rep or {}).get("verdict", {}).get(name) == "probation" else 1.0
+        rep = self.rep or {}
+        if rep.get("verdict", {}).get(name) == "probation":
+            return 0.5
+        return self.kelly_mult(cfg, name)
+
+    def kelly_mult(self, cfg, name):
+        """Quarter-Kelly sizing from the measured edge: strong, steady strategies bet more, thin ones less.
+        Kelly fraction of capital = average return / variance of returns; a quarter of it is the usual safe
+        share. Compared with the normal risk-based size, kept within 0.5x - 1.5x (caps still apply after)."""
+        k = cfg.get("kelly", {})
+        s = ((self.rep or {}).get("stats") or {}).get(name) or {}
+        if not k.get("enabled", True) or (s.get("n") or 0) < k.get("min_signals", 8) or not s.get("sd") or s.get("avg") is None:
+            return 1.0
+        avg, sd = s["avg"] / 100, s["sd"] / 100
+        if avg <= 0:
+            return 0.5
+        kelly_pos = k.get("fraction", 0.25) * avg / (sd * sd)              # fraction of equity to put in
+        st_cfg = cfg["strategies"].get(name) or {}
+        base_pos = min(cfg["risk_per_trade_pct"] / st_cfg.get("stop_loss_pct", 10),
+                       min(cfg["max_position_pct"], st_cfg.get("max_position_pct", 100)) / 100)
+        return round(max(k.get("min_mult", 0.5), min(k.get("max_mult", 1.5), kelly_pos / base_pos)), 2)
 
     def why(self, name):
         return (self.rep or {}).get("why", {}).get(name, "no evidence measured yet")
