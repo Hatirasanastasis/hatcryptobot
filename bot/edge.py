@@ -56,7 +56,7 @@ def _barrier(rows, i, stop, tp, horizon_min):
 SAFETY_PATH = HERE / "data" / "safety.json"
 
 
-def safety_verdicts(cfg, mints):
+def safety_verdicts(cfg, mints, light=False):
     """The live bot only buys coins that pass its safety checks (RugCheck, mint/freeze authority, LP lock),
     so the evidence must skip coins that fail them — otherwise a rug the bot would never touch counts as a loss.
     Results are cached in data/safety.json."""
@@ -64,20 +64,21 @@ def safety_verdicts(cfg, mints):
         cache = json.loads(SAFETY_PATH.read_text())
     except Exception:
         cache = {}
-    todo = [m for m in mints if m not in cache]
+    pre = "light:" if light else ""
+    todo = [m for m in mints if pre + m not in cache]
     if todo:
         try:
             import memebot as M
             chain = M.Solana(cfg["rpc_url"])
             for m in todo:
-                ok, why = M._safety(cfg, chain, m, m[:6])
-                cache[m] = {"ok": ok, "why": why, "t": int(time.time())}
+                ok, why = M._safety(cfg, chain, m, m[:6], light)
+                cache[pre + m] = {"ok": ok, "why": why, "t": int(time.time())}
                 time.sleep(0.3)
         except Exception as ex:
             print(f"safety lookups failed: {ex}")
         SAFETY_PATH.parent.mkdir(exist_ok=True)
         SAFETY_PATH.write_text(json.dumps(cache))
-    return {m: cache.get(m, {}).get("ok", True) for m in mints}
+    return {m: cache.get(pre + m, {}).get("ok", True) for m in mints}
 
 
 def measure(cfg, ticks, cost_pct=1.0, check_safety=True):
@@ -122,8 +123,12 @@ def measure(cfg, ticks, cost_pct=1.0, check_safety=True):
                     o = _barrier(rows, i, s["stop_loss_pct"], s["take_profit_pct"], s["stale_minutes"]) - cost_pct
                     out[n].append((t, m, o, f["sym"]))
     if check_safety:
-        safe = safety_verdicts(cfg, sorted({x[1] for xs in out.values() for x in xs if x[1] not in maj_mints}))
-        out = {n: [x for x in xs if safe.get(x[1], True)] for n, xs in out.items()}
+        light_rules = {n for n in out if (cfg["strategies"].get(n) or {}).get("light_safety")}
+        safe = safety_verdicts(cfg, sorted({x[1] for n, xs in out.items() if n not in light_rules for x in xs
+                                            if x[1] not in maj_mints}))
+        safe_l = safety_verdicts(cfg, sorted({x[1] for n, xs in out.items() if n in light_rules for x in xs
+                                              if x[1] not in maj_mints}), light=True) if light_rules else {}
+        out = {n: [x for x in xs if (safe_l if n in light_rules else safe).get(x[1], True)] for n, xs in out.items()}
     stats = {}
     for n, xs in out.items():
         rs = [x[2] for x in xs]

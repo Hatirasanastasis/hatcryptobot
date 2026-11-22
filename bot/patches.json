@@ -218,5 +218,17 @@
    "dip",
    "momentum"
   ]
+ },
+ {
+  "id": "runner-new-light-2026-11-22",
+  "file": "config.json",
+  "path": "strategies.runner_new.light_safety",
+  "value": true
+ },
+ {
+  "id": "runner-new-off-2026-11-22",
+  "file": "config.json",
+  "path": "strategies.runner_new.enabled",
+  "value": false
  }
 ]

@@ -303,13 +303,18 @@ def rugcheck(mint):
 _safety_cache: dict = {}
 
 
-def safety_screen(cfg, chain, mint, sym) -> tuple[bool, str]:
-    """On-chain + RugCheck checks, cached 30 min."""
-    c = _safety_cache.get(mint)
+def safety_screen(cfg, chain, mint, sym, light=False) -> tuple[bool, str]:
+    """On-chain + RugCheck checks, cached 30 min. light=True: for fresh coins, RugCheck's generic danger flags
+    (which count the trading pool as a holder, and call every new pool 'low liquidity') are replaced by the
+    pool-aware holder check; mint/freeze authority and creators with rugged tokens still block."""
+    key = ("light:" if light else "") + mint
+    c = _safety_cache.get(key)
     if c and time.time() - c[0] < 1800:
         return c[1]
-    res = _safety(cfg, chain, mint, sym)
-    _safety_cache[mint] = (time.time(), res)
+    res = _safety(cfg, chain, mint, sym, light)
+    _safety_cache[key] = (time.time(), res)
+    if light:
+        return res
     try:   # share verdicts with the edge check (it skips coins the bot would never buy)
         p = HERE / "data" / "safety.json"
         d = json.loads(p.read_text()) if p.exists() else {}
@@ -320,7 +325,7 @@ def safety_screen(cfg, chain, mint, sym) -> tuple[bool, str]:
     return res
 
 
-def _safety(cfg, chain, mint, sym):
+def _safety(cfg, chain, mint, sym, light=False):
     if cfg["require_revoked_authorities"]:
         try:
             info = chain.mint_info(mint)
@@ -333,6 +338,10 @@ def _safety(cfg, chain, mint, sym):
         if info.get("freezeAuthority"):
             return False, f"{sym}: dev can freeze your tokens"
     rc = rugcheck(mint)
+    if rc and light:
+        if any("rugged" in (r.get("name") or "").lower() for r in rc.get("risks", [])):
+            return False, f"{sym}: creator has rugged tokens before"
+        rc = None                        # the rest is judged by the pool-aware holder check below
     if rc:
         score = rc.get("score_normalised", rc.get("score", 0)) or 0
         danger = [r.get("name") for r in rc.get("risks", []) if r.get("level") == "danger"]
@@ -1147,7 +1156,8 @@ class Bot:
                              pair["baseToken"]["symbol"], jump)
                     continue
             if mint not in majors:
-                ok, swhy = safety_screen(c, self.chain, mint, pair["baseToken"]["symbol"])
+                ok, swhy = safety_screen(c, self.chain, mint, pair["baseToken"]["symbol"],
+                                         light=bool((c["strategies"].get(name) or {}).get("light_safety")))
                 if not ok:
                     log.info(swhy)
                     continue
