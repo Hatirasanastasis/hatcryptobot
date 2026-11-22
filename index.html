@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="HatCryptoBot: an automated crypto trading desk that trades only strategies proven on real market data, with a stop on every trade. €39 per month.">
+<meta property="og:title" content="HatCryptoBot">
+<meta property="og:description" content="Your private trading desk, awake while you sleep. €39/month, first month 40% off with HATIRAS40.">
+<meta name="theme-color" content="#0d0c0b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%230d0c0b'/%3E%3Cpath d='M3 15 L8 9 L11 12 L17 5' fill='none' stroke='%23c9a15a' stroke-width='1.8'/%3E%3C/svg%3E">
+<title>HatCryptoBot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a private-bank trading desk — obsidian ground, ivory type, one brushed-brass accent; a ledger strip of real numbers under the hero */
+:root{
+  --ink:#0d0c0b; --panel:#151311; --line:#2a2622; --ivory:#efe8dc; --muted:#a79e91; --brass:#c9a15a; --brass-2:#e3c48a; --up:#7fc29b; --down:#d98b7a;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif; --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--ivory);font:16px/1.6 var(--body);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--brass-2)}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px;flex-wrap:wrap}
+.mark{font:600 22px var(--display);letter-spacing:.02em}
+.mark span{color:var(--brass)}
+nav{display:flex;gap:22px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+nav a:hover,nav a:focus-visible{color:var(--ivory)}
+.hero .wrap{padding-block:72px 56px;display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:end}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+h1{font:400 clamp(40px,6.4vw,76px)/1.02 var(--display);margin:14px 0 20px;text-wrap:balance;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--brass-2)}
+.lede{color:var(--muted);max-width:60ch;margin:0 0 28px;font-size:18px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{font:600 15px var(--body);border-radius:2px;padding:14px 22px;cursor:pointer;border:1px solid var(--brass);background:var(--brass);color:var(--ink);letter-spacing:.02em;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--brass-2);border-color:var(--brass-2)}
+.btn.ghost{background:transparent;color:var(--ivory);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--brass)}
+.btn:focus-visible,input:focus-visible{outline:2px solid var(--brass-2);outline-offset:2px}
+.seal{border:1px solid var(--line);padding:28px;background:linear-gradient(160deg,#1b1815,#121110)}
+.seal .k{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.seal .big{font:400 64px/1 var(--display);margin:10px 0 4px}
+.seal .big small{font:400 20px var(--body);color:var(--muted)}
+.seal .code{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.seal .code b{font:500 15px var(--mono);color:var(--brass-2);letter-spacing:.08em}
+.ledger{border-block:1px solid var(--line);background:var(--panel)}
+.ledger .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-block:26px;gap:16px}
+.cell .v{font:500 26px var(--mono);font-variant-numeric:tabular-nums}
+.cell .l{font-size:13px;color:var(--muted)}
+.up{color:var(--up)}
+.note{font:12px var(--mono);color:var(--muted);padding-block:10px 0;letter-spacing:.02em}
+section{padding-block:80px}
+h2{font:400 clamp(30px,4vw,44px)/1.1 var(--display);margin:8px 0 18px;text-wrap:balance}
+.sub{color:var(--muted);max-width:62ch;margin:0}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:40px}
+.step{background:var(--ink);padding:28px}
+.step .n{font:400 40px var(--display);color:var(--brass)}
+.step h3{font:600 18px var(--body);margin:6px 0 8px}
+.step p{color:var(--muted);margin:0;font-size:15px}
+.feats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;margin-top:36px}
+.feat{display:grid;grid-template-columns:120px 1fr;gap:16px;padding-block:18px;border-top:1px solid var(--line)}
+.feat dt{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--brass);padding-top:3px}
+.feat dd{margin:0;color:var(--ivory)}
+.feat dd span{display:block;color:var(--muted);font-size:14px}
+.pricing .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.card{border:1px solid var(--brass);padding:36px;background:linear-gradient(170deg,#1c1813,#0f0e0c)}
+.card .tier{font:500 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+.price{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.price .now{font:400 72px/1 var(--display)}
+.price .was{font:400 26px var(--display);color:var(--muted);text-decoration:line-through}
+.price .per{color:var(--muted)}
+.card ul{list-style:none;padding:0;margin:22px 0;display:grid;gap:10px}
+.card li{padding-left:22px;position:relative;color:var(--ivory);font-size:15px}
+.card li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:1px;background:var(--brass)}
+.promo{display:flex;gap:10px;margin:8px 0 6px;flex-wrap:wrap}
+.promo label{flex-basis:100%;font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.promo input{flex:1;min-width:0;font:500 15px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);border:1px solid var(--line);color:var(--ivory);padding:12px 14px;border-radius:2px}
+.msg{min-height:1.6em;font-size:14px}
+.msg.ok{color:var(--up)} .msg.bad{color:var(--down)}
+.reserve{margin-top:18px;width:100%}
+.done{margin-top:16px;padding:16px;border:1px solid var(--line);color:var(--muted);font-size:14px}
+.fine{color:var(--muted);font-size:14px}
+.fine p{margin:0 0 14px;max-width:62ch}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer .wrap{padding-block:32px;display:grid;gap:10px}
+@media (max-width:860px){
+  .hero .wrap,.pricing .wrap{grid-template-columns:1fr}
+  .ledger .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps,.feats{grid-template-columns:1fr}
+  .feat{grid-template-columns:1fr;gap:4px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .seal{animation:rise .7s ease-out both}
+  @keyframes rise{from{transform:translateY(10px)}to{transform:none}}
+}
+</style>
+</head>
+<body>
+
+
+<header><div class="wrap">
+  <div class="mark">Hat<span>Crypto</span>Bot</div>
+  <nav aria-label="Sections"><a href="#how">How it works</a><a href="#desk">The desk</a><a href="#price">Membership</a><a href="#risk">Risk</a></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div>
+    <div class="eyebrow">Automated trading · Solana &amp; major exchanges</div>
+    <h1>Your private trading desk, <em>awake</em> while you sleep.</h1>
+    <p class="lede">HatCryptoBot watches hundreds of coins every fifteen seconds and trades only the setups that have proven a profit after fees on real market data. Every position carries a stop. Your money never leaves your own wallet or exchange.</p>
+    <div class="cta"><a class="btn" href="#price">Join the waitlist</a><a class="btn ghost" href="#how">See how it decides</a></div>
+  </div>
+  <aside class="seal" aria-label="Membership summary">
+    <div class="k">Membership</div>
+    <div class="big">€39 <small>/ month</small></div>
+    <div class="fine">Cancel anytime. One desk, every strategy, every update.</div>
+    <div class="code"><span class="fine">First month 40% off</span><b>HATIRAS40</b></div>
+  </aside>
+</div></div>
+
+<div class="ledger" aria-label="Paper-trading record">
+  <div class="wrap">
+    <div class="cell"><div class="v up">+9.2%</div><div class="l">Balance since 20 Nov</div></div>
+    <div class="cell"><div class="v">23</div><div class="l">Closed trades</div></div>
+    <div class="cell"><div class="v">57%</div><div class="l">Winning trades</div></div>
+    <div class="cell"><div class="v up">+3.4%</div><div class="l">Average per trade</div></div>
+    <div class="cell"><div class="v">≈5%</div><div class="l">Deepest drawdown</div></div>
+  </div>
+  <div class="wrap note">Paper-trading record (real prices, simulated money) from 20 to 22 Nov 2026. A short record; past results do not predict future returns.</div>
+</div>
+
+<section id="how"><div class="wrap">
+  <div class="eyebrow">How it decides</div>
+  <h2>Three gates before a single coin is bought</h2>
+  <p class="sub">Most bots trade every signal they see. This one has to convince itself first.</p>
+  <div class="steps">
+    <div class="step"><div class="n">i</div><h3>It watches</h3><p>About 285 coins, re-read every 15 seconds: price speed, real buyers versus sellers, pool depth, holder spread and trending themes.</p></div>
+    <div class="step"><div class="n">ii</div><h3>It proves</h3><p>Every 30 minutes each strategy is replayed on fresh market data. Only those that made money after fees in the recent past may trade.</p></div>
+    <div class="step"><div class="n">iii</div><h3>It protects</h3><p>Rug and honeypot checks, developer and insider holdings, wash-trading filter, a stop on every trade, a daily loss limit and a kill switch.</p></div>
+  </div>
+</div></section>
+
+<section id="desk" style="padding-top:0"><div class="wrap">
+  <div class="eyebrow">The desk</div>
+  <h2>Everything a careful trader does, every fifteen seconds</h2>
+  <dl class="feats">
+    <div class="feat"><dt>Meme coins</dt><dd>Solana, through Jupiter<span>Runner and rocket strategies for coins still accelerating; others wait in shadow until proven.</span></dd></div>
+    <div class="feat"><dt>Exchanges</dt><dd>Binance, Bybit, OKX, Kraken and more<span>Paper, demo or real money, with a budget the bot can never exceed.</span></dd></div>
+    <div class="feat"><dt>Sizing</dt><dd>Quarter-Kelly<span>Stronger proven edge, larger position; thinner edge, smaller one.</span></dd></div>
+    <div class="feat"><dt>Smart money</dt><dd>Wallets that keep buying winners early<span>Followed live; two or more agreeing on one coin is a signal.</span></dd></div>
+    <div class="feat"><dt>Copy desk</dt><dd>Solana, Base, Ethereum, BNB<span>Mirror chosen traders with the same safety gates in front.</span></dd></div>
+    <div class="feat"><dt>Self-improving</dt><dd>Re-tuned every three hours<span>A setting changes only when it wins on data it was not tuned on.</span></dd></div>
+  </dl>
+</div></section>
+
+<section id="price" class="pricing" style="padding-top:0"><div class="wrap">
+  <div>
+    <div class="eyebrow">Membership</div>
+    <h2>One membership. The whole desk.</h2>
+    <p class="sub">Early members are admitted in order of sign-up. Payment opens at launch; joining the waitlist costs nothing.</p>
+  </div>
+  <div class="card">
+    <div class="tier">HatCryptoBot Membership</div>
+    <div class="price"><span class="was" id="was" hidden>€39</span><span class="now" id="now">€39</span><span class="per" id="per">/ month</span></div>
+    <div class="fine" id="after">Billed monthly. Cancel anytime.</div>
+    <ul>
+      <li>Meme-coin bot, launch sniper and copy desk</li>
+      <li>Connect your own wallet or exchange. Keys stay with you</li>
+      <li>Live dashboard on desktop and phone</li>
+      <li>Every strategy update, delivered automatically</li>
+    </ul>
+    <form class="promo" id="promoForm" novalidate>
+      <label for="code">Promo code</label>
+      <input id="code" name="code" autocomplete="off" placeholder="Enter code" maxlength="20">
+      <button class="btn ghost" type="submit">Apply</button>
+    </form>
+    <div class="msg" id="msg" role="status" aria-live="polite"></div>
+    <form class="promo" id="wl" name="waitlist" method="POST" data-netlify="true" netlify-honeypot="company" action="/thanks.html" style="margin-top:18px">
+      <input type="hidden" name="form-name" value="waitlist">
+      <p hidden><label>Company <input name="company"></label></p>
+      <input type="hidden" name="promo" id="wlPromo">
+      <label for="email">Join the waitlist — we email you when payment opens</label>
+      <input id="email" name="email" type="email" required placeholder="you@email.com" autocomplete="email">
+      <button class="btn" type="submit">Join waitlist</button>
+    </form>
+  </div>
+</div></section>
+
+<section id="risk" style="padding-top:0"><div class="wrap fine">
+  <div class="eyebrow">Risk</div>
+  <h2 style="color:var(--ivory)">Read this before you trade</h2>
+  <p>Crypto trading, and meme coins above all, can lose part or all of the money you put in. HatCryptoBot is software that trades on your own account under your settings; it does not hold your funds, give personal investment advice or promise any return.</p>
+  <p>The figures shown come from a short paper-trading period with simulated money and real market prices. Live results differ because of fees, slippage and market conditions. Start with an amount you can afford to lose.</p>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="mark" style="font-size:18px">Hat<span>Crypto</span>Bot</div>
+  <div>© 2026 HatCryptoBot. Membership €39 per month. Promo HATIRAS40: 40% off the first month.</div>
+</div></footer>
+
+<script>
+(function(){
+  var PRICE=39, CODES={HATIRAS40:0.40};
+  var $=function(id){return document.getElementById(id)};
+  var applied=null;
+  function eur(n){return "€"+(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,"")}
+  function render(){
+    if(applied){
+      var off=CODES[applied];
+      $("was").hidden=false; $("now").textContent=eur(PRICE*(1-off)); $("per").textContent="first month";
+      $("after").textContent="Then "+eur(PRICE)+" per month. Cancel anytime.";
+    }else{
+      $("was").hidden=true; $("now").textContent=eur(PRICE); $("per").textContent="/ month";
+      $("after").textContent="Billed monthly. Cancel anytime.";
+    }
+  }
+  function apply(code){
+    code=(code||"").trim().toUpperCase();
+    var m=$("msg");
+    if(!code){applied=null;m.textContent="";m.className="msg";render();return}
+    if(CODES[code]!=null){applied=code;m.textContent="Code "+code+" applied: "+Math.round(CODES[code]*100)+"% off your first month.";m.className="msg ok"}
+    else{applied=null;m.textContent="That code is not valid. Check the spelling and try again.";m.className="msg bad"}
+    render();
+  }
+  $("promoForm").addEventListener("submit",function(e){e.preventDefault();apply($("code").value)});
+  $("wl").addEventListener("submit",function(e){
+    $("wlPromo").value=applied||"";
+    if(!/netlify\.app$/.test(location.hostname) && !document.querySelector('meta[name="hcb-forms"]')){
+      // hosts without a form service: keep the reservation on this device and say so plainly
+      e.preventDefault();
+      try{localStorage.setItem("hcb-waitlist",JSON.stringify({email:$("email").value,promo:applied||"",t:Date.now()}))}catch(x){}
+      $("msg").textContent="Thank you. Sign-ups open at launch; your code "+(applied||"")+" is kept on this device.";$("msg").className="msg ok";
+    }
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>

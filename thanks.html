@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="HatCryptoBot: an automated crypto trading desk that trades only strategies proven on real market data, with a stop on every trade. €39 per month.">
+<meta property="og:title" content="HatCryptoBot">
+<meta property="og:description" content="Your private trading desk, awake while you sleep. €39/month, first month 40% off with HATIRAS40.">
+<meta name="theme-color" content="#0d0c0b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Crect width='20' height='20' fill='%230d0c0b'/%3E%3Cpath d='M3 15 L8 9 L11 12 L17 5' fill='none' stroke='%23c9a15a' stroke-width='1.8'/%3E%3C/svg%3E">
+<title>HatCryptoBot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a private-bank trading desk — obsidian ground, ivory type, one brushed-brass accent; a ledger strip of real numbers under the hero */
+:root{
+  --ink:#0d0c0b; --panel:#151311; --line:#2a2622; --ivory:#efe8dc; --muted:#a79e91; --brass:#c9a15a; --brass-2:#e3c48a; --up:#7fc29b; --down:#d98b7a;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif; --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ink);color:var(--ivory);font:16px/1.6 var(--body);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--brass-2)}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:20px;flex-wrap:wrap}
+.mark{font:600 22px var(--display);letter-spacing:.02em}
+.mark span{color:var(--brass)}
+nav{display:flex;gap:22px;flex-wrap:wrap}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+nav a:hover,nav a:focus-visible{color:var(--ivory)}
+.hero .wrap{padding-block:72px 56px;display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:end}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+h1{font:400 clamp(40px,6.4vw,76px)/1.02 var(--display);margin:14px 0 20px;text-wrap:balance;letter-spacing:-.01em}
+h1 em{font-style:italic;color:var(--brass-2)}
+.lede{color:var(--muted);max-width:60ch;margin:0 0 28px;font-size:18px}
+.cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{font:600 15px var(--body);border-radius:2px;padding:14px 22px;cursor:pointer;border:1px solid var(--brass);background:var(--brass);color:var(--ink);letter-spacing:.02em;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--brass-2);border-color:var(--brass-2)}
+.btn.ghost{background:transparent;color:var(--ivory);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--brass)}
+.btn:focus-visible,input:focus-visible{outline:2px solid var(--brass-2);outline-offset:2px}
+.seal{border:1px solid var(--line);padding:28px;background:linear-gradient(160deg,#1b1815,#121110)}
+.seal .k{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.seal .big{font:400 64px/1 var(--display);margin:10px 0 4px}
+.seal .big small{font:400 20px var(--body);color:var(--muted)}
+.seal .code{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.seal .code b{font:500 15px var(--mono);color:var(--brass-2);letter-spacing:.08em}
+.ledger{border-block:1px solid var(--line);background:var(--panel)}
+.ledger .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-block:26px;gap:16px}
+.cell .v{font:500 26px var(--mono);font-variant-numeric:tabular-nums}
+.cell .l{font-size:13px;color:var(--muted)}
+.up{color:var(--up)}
+.note{font:12px var(--mono);color:var(--muted);padding-block:10px 0;letter-spacing:.02em}
+section{padding-block:80px}
+h2{font:400 clamp(30px,4vw,44px)/1.1 var(--display);margin:8px 0 18px;text-wrap:balance}
+.sub{color:var(--muted);max-width:62ch;margin:0}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:40px}
+.step{background:var(--ink);padding:28px}
+.step .n{font:400 40px var(--display);color:var(--brass)}
+.step h3{font:600 18px var(--body);margin:6px 0 8px}
+.step p{color:var(--muted);margin:0;font-size:15px}
+.feats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;margin-top:36px}
+.feat{display:grid;grid-template-columns:120px 1fr;gap:16px;padding-block:18px;border-top:1px solid var(--line)}
+.feat dt{font:500 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--brass);padding-top:3px}
+.feat dd{margin:0;color:var(--ivory)}
+.feat dd span{display:block;color:var(--muted);font-size:14px}
+.pricing .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.card{border:1px solid var(--brass);padding:36px;background:linear-gradient(170deg,#1c1813,#0f0e0c)}
+.card .tier{font:500 12px var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+.price{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.price .now{font:400 72px/1 var(--display)}
+.price .was{font:400 26px var(--display);color:var(--muted);text-decoration:line-through}
+.price .per{color:var(--muted)}
+.card ul{list-style:none;padding:0;margin:22px 0;display:grid;gap:10px}
+.card li{padding-left:22px;position:relative;color:var(--ivory);font-size:15px}
+.card li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:1px;background:var(--brass)}
+.promo{display:flex;gap:10px;margin:8px 0 6px;flex-wrap:wrap}
+.promo label{flex-basis:100%;font:500 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.promo input{flex:1;min-width:0;font:500 15px var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);border:1px solid var(--line);color:var(--ivory);padding:12px 14px;border-radius:2px}
+.msg{min-height:1.6em;font-size:14px}
+.msg.ok{color:var(--up)} .msg.bad{color:var(--down)}
+.reserve{margin-top:18px;width:100%}
+.done{margin-top:16px;padding:16px;border:1px solid var(--line);color:var(--muted);font-size:14px}
+.fine{color:var(--muted);font-size:14px}
+.fine p{margin:0 0 14px;max-width:62ch}
+footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer .wrap{padding-block:32px;display:grid;gap:10px}
+@media (max-width:860px){
+  .hero .wrap,.pricing .wrap{grid-template-columns:1fr}
+  .ledger .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps,.feats{grid-template-columns:1fr}
+  .feat{grid-template-columns:1fr;gap:4px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .seal{animation:rise .7s ease-out both}
+  @keyframes rise{from{transform:translateY(10px)}to{transform:none}}
+}
+</style>
+</head>
+<body>
+<div class="hero"><div class="wrap" style="grid-template-columns:1fr">
+  <div class="eyebrow">Waitlist</div>
+  <h1>You are on the list.</h1>
+  <p class="lede">We will email you when membership opens. If you applied the code HATIRAS40, your 40% first-month discount is noted.</p>
+  <div class="cta"><a class="btn ghost" href="/">Back to HatCryptoBot</a></div>
+</div></div>
+</body>
+</html>
