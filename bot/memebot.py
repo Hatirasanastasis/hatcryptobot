@@ -214,7 +214,11 @@ def discover_dex() -> list[str]:
 
 GECKO_PATHS = ["/trending_pools?page=1&duration=5m", "/trending_pools?page=1&duration=1h",
                "/pools?page=1&sort=h24_volume_usd_desc", "/trending_pools?page=2&duration=1h",
-               "/pools?page=2&sort=h24_volume_usd_desc", "/trending_pools?page=1&duration=6h"]
+               "/pools?page=2&sort=h24_volume_usd_desc", "/trending_pools?page=1&duration=6h",
+               # wider net = more real coins recorded = more evidence for every strategy test
+               "/trending_pools?page=3&duration=1h", "/pools?page=3&sort=h24_volume_usd_desc",
+               "/trending_pools?page=2&duration=6h", "/pools?page=1&sort=h24_tx_count_desc",
+               "/pools?page=2&sort=h24_tx_count_desc", "/trending_pools?page=2&duration=5m"]
 _gecko = {"i": 0, "until": 0.0}
 
 
