@@ -254,5 +254,47 @@
   "file": "config.json",
   "path": "strategies.runner.stale_minutes",
   "value": 30
+ },
+ {
+  "id": "auto-20261122-2137-breakout-take_profit_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.take_profit_pct",
+  "value": 45
+ },
+ {
+  "id": "auto-20261122-2137-breakout-take_profit_sell_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.take_profit_sell_pct",
+  "value": 100
+ },
+ {
+  "id": "auto-20261122-2137-breakout-trail_activate_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.trail_activate_pct",
+  "value": 10
+ },
+ {
+  "id": "auto-20261122-2137-breakout-trailing_stop_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.trailing_stop_pct",
+  "value": 8
+ },
+ {
+  "id": "auto-20261122-2137-breakout-profit_lock_keep_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.profit_lock_keep_pct",
+  "value": 0
+ },
+ {
+  "id": "auto-20261122-2137-breakout-stale_minutes",
+  "file": "config.json",
+  "path": "strategies.breakout.stale_minutes",
+  "value": 20
+ },
+ {
+  "id": "auto-20261122-2137-breakout-breakeven_trigger_pct",
+  "file": "config.json",
+  "path": "strategies.breakout.breakeven_trigger_pct",
+  "value": 10
  }
 ]
