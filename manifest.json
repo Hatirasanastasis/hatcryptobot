@@ -1,11 +1,11 @@
 {
- "version": "1.13.3",
+ "version": "1.13.4",
  "files": {
   "bot/.env.example": "d627ccce2b4b67934a4fcca8b9ae03b0f8ee45a0de7f75e85eab22b1e72dcd95",
   "bot/GO_LIVE.md": "de661ca7a79ee277860dfe5495a11d697fd4b864cd720c0f4e7e77b466b82001",
   "bot/README.md": "aed1752cdec321c04f135f8ca14ae4cb88b92b1935b492d628f0fe1f8b9c7328",
   "bot/ai_brain.py": "84144812611babd620bef26db482e6c31c131b586bfa7d72ba49552f2e8de21a",
-  "bot/config.json": "0ee1afb6b818d0e8bf7fd22e8bb4a076444e28e9c3258e095fd2f5c715e9781a",
+  "bot/config.json": "44ac7427764c2085e24dee8d39566e278eff95c9c671448df9a6270c55174a01",
   "bot/copytrade.py": "420f739297d754704db567534bddcb417527f564d41640115bdacc2e56b7788f",
   "bot/edge.py": "007fb66c7a303df17593483beba4bb3d5258af56e44094a5e5becf4f63076904",
   "bot/events.json": "30734ec23d19a5e70c69229f859eb267336508b0bb82d4e8779aa8118e64103a",
@@ -16,7 +16,7 @@
   "bot/memebot.py": "6b3be78a69491ffa5caec4c4dc025197e1a55e4e6493ec9db046364b5a6ea946",
   "bot/model.py": "7aca888eaf073aad18a403c74997e4769a36eefc07f778b8e6881080cc00816e",
   "bot/narrative.py": "062080c01dbfdc848c8c2756d336093758eef5f4029835ca68ae69f8816c1c2e",
-  "bot/patches.json": "30b126bf19367dba145cf202cde7c285b0b2b554478ca18130b1edb45cfe0829",
+  "bot/patches.json": "7b39217d708d833f1939af3b463a7e4503ec369e62f3f9cb8345da734a3cf233",
   "bot/replay.py": "8898c71572b0984d8a029dc509a6fa5a6b11d5cfafdad92572ed3789ec43c707",
   "bot/requirements.txt": "28639e751428925d251aec2d545287623302c48f8d9dc2f3bc6cfb8a1079dab1",
   "bot/smartmoney.py": "61332032ffcf7e705905356a0349add13e821395f959766e1745eddefdb64b71",
@@ -26,6 +26,6 @@
   "bot/stream.py": "86d4ab6de0f2fef5ec9f5732fbcf98f3b77d0e934dc89eae8342b2e3f8d98757",
   "bot/wallets.json": "dd079e8f94ee041def1561098d89936200b8a631e7bcbe1d0bd943a3fad38e3d",
   "ui.html": "7f09e5ca5e0c05cff9f32d49a63ecab1dc07eaf2b6367793e169b6bed786d973",
-  "app/hatcryptobot.py": "d8000ef88badfb3b45a5a4df3af2e3caca9113eca3e4f732c4877fb8ec46dcb7"
+  "app/hatcryptobot.py": "e9e75d89b2dac5cb5c241d1474bc0ce8d657f7e37e06cc547a0b215e89997d54"
  }
 }

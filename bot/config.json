@@ -110,16 +110,16 @@
       "confirm_max_run_pct": 100,
       "confirm_min_run_pct": -100,
       "stop_loss_pct": 10,
-      "take_profit_pct": 20,
+      "take_profit_pct": 5,
       "take_profit_sell_pct": 50,
-      "trail_activate_pct": 6,
-      "trailing_stop_pct": 8,
+      "trail_activate_pct": 10,
+      "trailing_stop_pct": 12,
       "breakeven_trigger_pct": 10,
       "breakeven_lock_pct": 1,
-      "stale_minutes": 30,
+      "stale_minutes": 45,
       "stale_min_gain_pct": 3,
       "min_txns_m5": 30,
-      "profit_lock_keep_pct": 50
+      "profit_lock_keep_pct": 0
     },
     "rocket": {
       "min_txns_m5": 40
