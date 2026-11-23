@@ -34,7 +34,7 @@ PORT = int(os.environ.get("HCB_PORT", "8777"))
 KEEP = {"config.json", ".env", "wallets.json", "events.json", "state.json", "sniper_state.json", "copy_state.json"}
 PROCS = {}                                                  # name -> Popen
 LIVE = {}                                                   # name -> started in live mode (for restarts)
-APP_VERSION = "1.13.4"
+APP_VERSION = "1.13.5"
 UPDATE_URL = "https://raw.githubusercontent.com/Hatirasanastasis/hatcryptobot/main/"
 UPDATE_STATUS = {"checked": None, "msg": "not checked yet", "latest": None}
 
@@ -154,7 +154,7 @@ def apply_patches(patches):
         done = set()
     for p in patches:
         pid, path = p.get("id"), str(p.get("path", ""))
-        if not pid or pid in done or not (path.startswith("strategies.") or path in ("autotune", "strategy_priority")) or p.get("file") not in ("config.json", "market/config.json"):
+        if not pid or pid in done or not (path.startswith(("strategies.", "base.")) or path in ("autotune", "strategy_priority")) or p.get("file") not in ("config.json", "market/config.json"):
             continue
         cfg = jread(p["file"], {}) or {}
         d = cfg

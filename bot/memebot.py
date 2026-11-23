@@ -73,7 +73,7 @@ def apply_patches():
     except Exception:
         return
     todo = [p for p in patches if p.get("id") not in done and p.get("file") == "config.json"
-            and (str(p.get("path", "")).startswith("strategies.") or p.get("path") in ("autotune", "strategy_priority"))]
+            and (str(p.get("path", "")).startswith(("strategies.", "base.")) or p.get("path") in ("autotune", "strategy_priority"))]
     if not todo or not CONFIG_PATH.exists():
         return
     cfg = json.loads(CONFIG_PATH.read_text())

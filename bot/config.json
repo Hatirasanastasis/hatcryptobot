@@ -21,7 +21,7 @@
     "min_volume_h1_usd": 20000,
     "min_mcap_usd": 100000,
     "max_mcap_usd": 50000000,
-    "min_age_minutes": 20,
+    "min_age_minutes": 60,
     "max_age_hours": 168,
     "min_liq_mcap_ratio": 0.04,
     "max_vol_mcap_h1": 5

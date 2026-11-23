@@ -368,5 +368,11 @@
   "file": "config.json",
   "path": "strategies.breakout.stale_minutes",
   "value": 45
+ },
+ {
+  "id": "base-min-age-60-2026-11-23",
+  "file": "config.json",
+  "path": "base.min_age_minutes",
+  "value": 60
  }
 ]
