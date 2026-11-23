@@ -79,6 +79,7 @@ DEFAULTS = {
     "max_consecutive_losses": 4,
     "loss_streak_pause_minutes": 30,
 
+    "jackpot_pct": 50,
     "liquidity_drop_exit_pct": 40.0,
     "max_hold_hours": 8,
     "rebuy_cooldown_hours": 12,
@@ -381,6 +382,10 @@ def exit_step(cfg, s, p, value, liq, now_s):
         return 1.0, f"liquidity pulled ({p['entry_liq']:,.0f} → {liq:,.0f} USD)"
     if chg <= -s["stop_loss_pct"]:
         return 1.0, f"stop-loss {chg:.0f}%"
+    jackpot = s.get("jackpot_pct", cfg.get("jackpot_pct", 50))
+    if jackpot and chg >= jackpot:
+        # a huge fast gain on a meme coin is where rug pulls happen: bank all of it
+        return 1.0, f"jackpot +{chg:.0f}% — banked before a rug can take it"
     if peak_gain >= min(s["breakeven_trigger_pct"], s["trail_activate_pct"]) and chg <= s["breakeven_lock_pct"]:
         # once the trailing stop is armed, a winner may not turn into a loss
         return 1.0, f"breakeven stop (was +{peak_gain:.0f}%, now {chg:+.0f}%)"
