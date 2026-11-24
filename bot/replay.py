@@ -224,7 +224,8 @@ def autotune(samples=150, days=1.0, min_hours=3.0, min_trades=10, light=False):
         print(f"model training failed: {e}")
     try:
         import edge
-        edge.run(cfg, ticks)
+        long_ticks, _ = load(3.0)
+        edge.run(cfg, ticks, long_ticks=long_ticks)
     except Exception as e:
         print(f"edge check failed: {e}")
     if light:

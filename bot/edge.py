@@ -171,9 +171,18 @@ def verdicts(cfg, stats):
     return v
 
 
-def run(cfg, ticks, verbose=True):
+def run(cfg, ticks, verbose=True, long_ticks=None):
     stats = measure(cfg, ticks)
     v = verdicts(cfg, stats)
+    if long_ticks:
+        # a good last day is not proof: a strategy that loses over the last 3 days stays in shadow
+        need_n = cfg.get("edge_min_signals", 8)
+        lst = measure(cfg, long_ticks)
+        for n, (verdict, _) in list(v.items()):
+            ls = lst.get(n) or {}
+            if verdict != "shadow" and ls.get("n", 0) >= need_n and (ls.get("avg") or 0) < 0:
+                v[n] = ("shadow", f"good last day, but loses {ls['avg']:+.1f}% over 3 days ({ls['n']} signals, "
+                                  f"{ls['win']:.0%} wins)")
     mins = list(ticks)
     rep = {"time": int(time.time()), "hours": round((mins[-1] - mins[0]) / 3600, 1) if mins else 0,
            "stats": stats, "verdict": {n: x[0] for n, x in v.items()}, "why": {n: x[1] for n, x in v.items()}}
