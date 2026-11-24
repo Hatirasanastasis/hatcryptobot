@@ -1,13 +1,13 @@
 {
- "version": "1.13.7",
+ "version": "1.13.8",
  "files": {
   "bot/.env.example": "d627ccce2b4b67934a4fcca8b9ae03b0f8ee45a0de7f75e85eab22b1e72dcd95",
   "bot/GO_LIVE.md": "de661ca7a79ee277860dfe5495a11d697fd4b864cd720c0f4e7e77b466b82001",
   "bot/README.md": "aed1752cdec321c04f135f8ca14ae4cb88b92b1935b492d628f0fe1f8b9c7328",
   "bot/ai_brain.py": "84144812611babd620bef26db482e6c31c131b586bfa7d72ba49552f2e8de21a",
-  "bot/config.json": "1445a558a120a5de619909f4c7e1365b32c8b15287ca04904f51a453c766e0e6",
+  "bot/config.json": "43e6f31fce8c8c4645b35a83e218d2215b4c8527113f10523a2c415ffa242aa2",
   "bot/copytrade.py": "420f739297d754704db567534bddcb417527f564d41640115bdacc2e56b7788f",
-  "bot/edge.py": "e25d5e7c52b389167ad8b1d929a4ec2b3f07d9b8d0f310e4e356c5aee61af478",
+  "bot/edge.py": "33ea38cb5063644a3f37371e4e1114c2702468cd12773e1aa8ff5d83ea30de80",
   "bot/events.json": "30734ec23d19a5e70c69229f859eb267336508b0bb82d4e8779aa8118e64103a",
   "bot/evmcopy.py": "05bbf08613c67bb368bb17f59a2c100b3bd6086032de50fdce2b41a3f67cbc6a",
   "bot/lessons.py": "8ac5564fc22f9a2df5c68c3c64780a591309e253fe57df85b937e265722a48f6",
@@ -16,16 +16,16 @@
   "bot/memebot.py": "f90af2a9e4cd4616326b337da58881dc9b63448bcb4b6cd74c57e4480102a55c",
   "bot/model.py": "7aca888eaf073aad18a403c74997e4769a36eefc07f778b8e6881080cc00816e",
   "bot/narrative.py": "062080c01dbfdc848c8c2756d336093758eef5f4029835ca68ae69f8816c1c2e",
-  "bot/patches.json": "3e32676dd49c8cc3ba48ae21df7e076d8da92a3075817442892ad45a4f313f01",
+  "bot/patches.json": "975b648b752b6b65fd0f807e0a33a15da225eac8a8d362637b601ed3aad36691",
   "bot/replay.py": "8dc47faa5220333e4690261d430afc9f56a7fc7f63f7d9cd5f2a6af3c297f7bb",
   "bot/requirements.txt": "28639e751428925d251aec2d545287623302c48f8d9dc2f3bc6cfb8a1079dab1",
   "bot/smartmoney.py": "61332032ffcf7e705905356a0349add13e821395f959766e1745eddefdb64b71",
   "bot/sniper.py": "0ad3a23d1fe8e32434ee72f6a459c322a4f22c6bdbf848808bff1adaef94cfa1",
   "bot/social.py": "6602ea74cdcc0026883fa24be0292a9706c5bba72d53509b6f181417fa30a673",
-  "bot/strategy.py": "fba7c6c7c6ac7abbdd67c3bcd09ada2999bcb2d1e595c51bc40d759450ecb356",
+  "bot/strategy.py": "75be839a70c4333375c0aaee86ff0fe8e1a041ed3de6e210e8acc21b1579ad67",
   "bot/stream.py": "86d4ab6de0f2fef5ec9f5732fbcf98f3b77d0e934dc89eae8342b2e3f8d98757",
   "bot/wallets.json": "dd079e8f94ee041def1561098d89936200b8a631e7bcbe1d0bd943a3fad38e3d",
   "ui.html": "7f09e5ca5e0c05cff9f32d49a63ecab1dc07eaf2b6367793e169b6bed786d973",
-  "app/hatcryptobot.py": "bfcd7296cb35589d79e5b84136d7f44a8a0cd6b1dec82dc2dd5b4e9c00aa48f6"
+  "app/hatcryptobot.py": "859088d3d4b7e84dce0059dd31c0a22daa4184001eb574549872efdfe1240405"
  }
 }

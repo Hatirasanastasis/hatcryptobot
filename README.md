@@ -1,4 +1,4 @@
 # HatCryptoBot updates
 
-Version 1.13.7. The HatCryptoBot app downloads these files by itself.
+Version 1.13.8. The HatCryptoBot app downloads these files by itself.
 Settings, keys and wallets are never stored here.

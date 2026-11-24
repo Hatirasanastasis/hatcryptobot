@@ -374,5 +374,20 @@
   "file": "config.json",
   "path": "base.min_age_minutes",
   "value": 60
+ },
+ {
+  "id": "surge-priority-2026-11-24",
+  "file": "config.json",
+  "path": "strategy_priority",
+  "value": [
+   "surge",
+   "runner_new",
+   "runner",
+   "scalp",
+   "rocket",
+   "breakout",
+   "dip",
+   "momentum"
+  ]
  }
 ]

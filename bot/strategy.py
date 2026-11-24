@@ -177,6 +177,7 @@ DEFAULTS = {
             "max_position_pct": 10,
         },
         "runner_new": {"light_safety": True, "enabled": False, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 30, "take_profit_sell_pct": 100, "trail_activate_pct": 15, "trailing_stop_pct": 10, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 60, "stale_min_gain_pct": 1000, "max_position_pct": 8, "vol_stop": False, "base": {"min_mcap_usd": 30000, "max_mcap_usd": 100000, "min_age_minutes": 5, "max_age_hours": 1, "min_liq_mcap_ratio": 0.5}},
+        "surge": {"enabled": True, "min_liquidity_usd": 80000, "min_volume_h1_usd": 20000, "m5_min": 0, "m5_max": 12, "h1_min": 40, "h1_max": 120, "h6_min": 20, "min_buy_ratio": 1.2, "volume_accel": 0.8, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 20, "take_profit_sell_pct": 100, "trail_activate_pct": 1000, "trailing_stop_pct": 1000, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 5, "stale_min_gain_pct": 1000, "max_position_pct": 10, "vol_stop": False},
         "runner": {"enabled": True, "min_liquidity_usd": 20000, "min_volume_h1_usd": 20000, "m5_min": 4, "m5_max": 12, "h1_min": 20, "h1_max": 220, "h6_min": -20, "min_buy_ratio": 1.2, "volume_accel": 2.0, "min_txns_m5": 0, "confirm_scans": 1, "confirm_max_run_pct": 100, "confirm_min_run_pct": -100, "stop_loss_pct": 12, "take_profit_pct": 20, "take_profit_sell_pct": 100, "trail_activate_pct": 1000, "trailing_stop_pct": 1000, "breakeven_trigger_pct": 1000, "breakeven_lock_pct": 0, "profit_lock_keep_pct": 0, "stale_minutes": 30, "stale_min_gain_pct": 1000, "max_position_pct": 12, "vol_stop": False},
         "smart": {
             # bought when 2+ proven early-buyer wallets (smart money) bought the same coin in the last 20 min
@@ -208,7 +209,7 @@ DEFAULTS = {
                     "boost": 0.15, "rpc_pause_s": 0.35},
     "vol_stops": {"enabled": True, "noise_mult": 2.5, "min_frac": 0.7, "max_frac": 1.4},
     "model_gate": True,            # when the model is active, skip rule-based buys it rates in its bottom 40%
-    "strategy_priority": ["runner", "scalp", "rocket", "breakout", "dip", "momentum"],
+    "strategy_priority": ["surge", "runner", "scalp", "rocket", "breakout", "dip", "momentum"],
 
     # REGULAR TRADING inside the same bot: established Solana coins (wrapped BTC/ETH, DeFi blue chips,
     # the biggest long-lived memes). Same wallet, same balance, same Jupiter swaps, same edge gate.

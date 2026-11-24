@@ -195,6 +195,7 @@
     }
   },
   "strategy_priority": [
+    "surge",
     "runner_new",
     "runner",
     "scalp",

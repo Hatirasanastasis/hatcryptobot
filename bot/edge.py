@@ -26,7 +26,7 @@ import strategy as S
 
 HERE = Path(__file__).resolve().parent
 EDGE_PATH = HERE / "data" / "edge.json"
-RULES = ["runner", "runner_new", "scalp", "momentum", "dip", "breakout", "rocket", "maj_momentum", "maj_dip", "maj_breakout"]
+RULES = ["surge", "runner", "runner_new", "scalp", "momentum", "dip", "breakout", "rocket", "maj_momentum", "maj_dip", "maj_breakout"]
 
 
 def _as_pair(r):
@@ -168,6 +168,10 @@ def verdicts(cfg, stats):
             v[n] = ("shadow", f"worked before ({s['avg']:+.1f}%) but not recently ({s['recent']}%)")
         else:
             v[n] = ("trade", f"proven: {s['avg']:+.1f}% average after costs over {s['n']} signals, {s['recent']:+.1f}% recently")
+    if not cfg.get("edge_allow_probation", False):
+        # no trial trades: only proven strategies spend money; the rest keep recording until they prove themselves
+        v = {n: (("shadow", "recording only until proven — " + why) if verdict == "probation" else (verdict, why))
+             for n, (verdict, why) in v.items()}
     return v
 
 
