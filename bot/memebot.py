@@ -928,6 +928,13 @@ class Bot:
         self.state["cooldown"] = cd
         self.state["bench"] = {k: v for k, v in self.state["bench"].items() if v > now}
         allowed = {n for n in c["strategies"] if n not in self.state["bench"]}
+        if not c.get("edge_allow_probation", False):
+            # strategies the proof check can't measure (model, hype, smart money) spend money only with a
+            # proven live record: 10+ trades averaging over +1%
+            for n in [n for n in allowed if n not in EDGE.RULES]:
+                rs = [r["ret_pct"] for r in self.state.get("results", []) if r.get("strategy") == n][-20:]
+                if len(rs) < 10 or sum(rs) / len(rs) <= 1.0:
+                    allowed.discard(n)
         # falling market: everything still allowed, at half size (risk_off_size_mult)
 
         # look-ahead model: score every coin on where it is likely to be in 15 minutes
