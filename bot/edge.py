@@ -161,9 +161,11 @@ def verdicts(cfg, stats):
                 v[n] = ("probation", f"early days, half size ({s['n']} signals"
                                      + (f", {s['avg']:+.1f}% avg" if s["avg"] is not None else "") + ")")
             else:
-                v[n] = ("shadow", f"blocked: loses {s['avg']:+.1f}% on average over {s['n']} signals")
+                v[n] = ("shadow", f"blocked: {s['avg']:+.1f}% on average over {s['n']} signals, and the latest ones lose")
         elif s["avg"] < need_avg:
             v[n] = ("shadow", f"loses money: {s['avg']:+.1f}% average after costs over {s['n']} signals")
+        elif (s["win"] or 0) < cfg.get("edge_min_win", 0.5):
+            v[n] = ("shadow", f"wins too rarely: {s['win']:.0%} wins ({s['avg']:+.1f}% avg over {s['n']} signals) — needs {cfg.get('edge_min_win', 0.5):.0%}+")
         elif s["recent"] is None or s["recent"] <= 0:
             v[n] = ("shadow", f"worked before ({s['avg']:+.1f}%) but not recently ({s['recent']}%)")
         else:

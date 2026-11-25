@@ -42,6 +42,7 @@ DEFAULTS = {
     "edge_gate": True,                # rule strategies trade only when the recorded data proves they make money
     "edge_min_signals": 8,
     "edge_min_avg_pct": 0.5,
+    "edge_min_win": 0.5,
     "edge_probation_min_signals": 3,  # promising strategies trade at half size before they have 8 signals
     "max_round_trip_loss_pct": 8.0,
     "max_jump_2min_pct": 8.0,          # skip coins that spiked this much in the last 2-3 minutes   # buy-then-sell quote must not lose more than this (honeypot / hidden tax check)
